@@ -1,14 +1,16 @@
+const jwtUtils = require('../utils/jwt.utils');
+
 module.exports = {
-    createMessage: (req, res) => {
+    createArticle: (req, res) => {
+        
+    },
+    listArticles: (req, res) => {
 
     },
-    listMessages: (req, res) => {
+    findArticle: (req, res) => {
 
     },
-    findMessage: (req, res) => {
-
-    },
-    deleteMessage: (req, res) => {
+    deleteArticle: (req, res) => {
         
     }
 }

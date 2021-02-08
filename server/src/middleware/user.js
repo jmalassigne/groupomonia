@@ -1,14 +1,14 @@
 //Imports
 const models = require('../../models');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const jwtUtils = require('../utils/jwt.utils');
+
 
 //constants
 const PASSWORD_REGEX = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,255}$/;
 const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 const USERNAME_REGEX = /^[a-zA-Z]{5,50}$/;
-const SECRET_TOKEN = 'ja18k9kjd01kdj7dj1278j8k4d12bv';
-const TOKEN_LIMIT = '1h';
+
 
 module.exports = {
     signup: (req, res) => {
@@ -52,11 +52,7 @@ module.exports = {
                                     isAdmin: 0
                                 })
                                     .then(createdUser => res.status(201).json({
-                                        id: createdUser.id,
-                                        token: jwt.sign(
-                                            {userId: createdUser.id},
-                                            SECRET_TOKEN,
-                                            {expiresIn: TOKEN_LIMIT})
+                                        token: jwtUtils.generateTokenForUser(createdUser.id, createdUser.isAdmin)
                                     }))
                                     .catch(err => res.status(500).json({ err }))
                             })
@@ -90,12 +86,7 @@ module.exports = {
                         }
 
                         res.status(200).json({
-                            id: userFound.id,
-                            token: jwt.sign(
-                                {userId: userFound.id},
-                                SECRET_TOKEN,
-                                {expiresIn: TOKEN_LIMIT}
-                            )
+                            token: jwtUtils.generateTokenForUser(userFound.id, userFound.isAdmin)
                         })
 
                     })
