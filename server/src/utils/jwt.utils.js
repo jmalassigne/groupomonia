@@ -19,22 +19,19 @@ module.exports =  {
         }
     )
   },
-  parseAuthorization: (authorization) => {
-    return (authorization != null) ? authorization.split(' ')[1] : null;
+  parseAuthorization: function(authorization) {
+    return (authorization != null) ? authorization.replace('Bearer ', '') : null;
   },
-  getUserId: (authorization) => {
-    const userId = -1;
-    const token = module.exports.parseAuthorization(authorization);
-
+  getUserId: function(authorization) {
+    var userId = -1;
+    var token = module.exports.parseAuthorization(authorization);
     if(token != null) {
-        try{
-            const jwtToken = jwt.verify(token, SECRET_SIGN);
-            if(jwtToken != null) {
-                userId = jwtToken.userId;
-            }
-        } catch(err) {}
+      try {
+        var jwtToken = jwt.verify(token, SECRET_SIGN);
+        if(jwtToken != null)
+          userId = jwtToken.userId;
+      } catch(err) { }
     }
     return userId;
   }
-  
 };

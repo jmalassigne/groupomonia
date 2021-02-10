@@ -19,7 +19,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Article.init({
-    idUSERS: DataTypes.INTEGER,
     title: DataTypes.STRING,
     content: DataTypes.TEXT
   }, {
