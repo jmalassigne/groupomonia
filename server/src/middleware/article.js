@@ -7,6 +7,10 @@ module.exports = {
         const userId = jwtUtils.getUserId(headerAuth);
         const newArticle = {...req.body};
 
+        if(userId < 0){
+            return res.status(404).json({error: "Invalid user"});
+        }
+
         if(newArticle.title.length > 50 || newArticle.title.length < 5){
             return res.status(404).json({error: "Title must contains at least 5 characters and a maximum of 50"})
         }
@@ -44,6 +48,19 @@ module.exports = {
 
     },
     deleteArticle: (req, res) => {
+        const articleId = req.query.id;
         
+        models.Comment.destroy({
+            where: {articleId : articleId}
+        }).then(() => {
+
+            models.Article.destroy({
+                where: {id: articleId}
+            })
+            .then(() => res.status(200).json({message: 'Article deleted sucessfully'}))
+            .catch(err => res.status(400).json({ err }));
+
+        })
+        .catch(err => res.status(400).json({ err }))
     }
 }

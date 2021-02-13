@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       models.User.belongsToMany(models.Article, {
         through: models.Like,
         foreignKey: 'userId',
-        otherKey: 'ArticleId'
+        otherKey: 'articleId'
       });
 
       models.Article.belongsToMany(models.User, {
@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       });
 
       models.Like.belongsTo(models.Article, {
-        foreignKey: 'ArticleId',
+        foreignKey: 'articleId',
         as: 'article'
       });
     }

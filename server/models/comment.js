@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
 
       models.Article.belongsToMany(models.User, {
         through: models.Comment,
-        foreignKey: 'ArticleId',
+        foreignKey: 'articleId',
         otherKey: 'userId'
       });
 
@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
       });
 
       models.Comment.belongsTo(models.Article, {
-        foreignKey: 'ArticleId',
+        foreignKey: 'articleId',
         as: 'article'
       });
     }
@@ -49,7 +49,7 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id'
       }
      },
-    content: DataTypes.TEXT
+    content: DataTypes.TEXT(200)
   }, {
     sequelize,
     modelName: 'Comment',
