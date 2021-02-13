@@ -69,7 +69,7 @@ module.exports = {
         const userInfos = {...req.body};
 
         models.User.findOne({
-            attributes: ['id', 'password'],
+            attributes: ['id', 'password', 'isAdmin'],
             where: {email: userInfos.email}
         })
             .then(userFound => {

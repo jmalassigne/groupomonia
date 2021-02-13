@@ -16,18 +16,7 @@ module.exports = {
             return res.status(404).json({error: "Invalid user"});
         }
 
-        const isUserAnAdmin = await models.User.findOne({
-            attributes: ['isAdmin'],
-            where: {id: userId}
-        }).then(userFound => {
-            if(!userFound){
-                return res.status(400).json({error: 'User does not exist'});
-            }
-            return userFound.isAdmin;
-        })
-        .catch(err => {
-            return res.status(500).json({ err });
-        });
+        const isUserAnAdmin = jwtUtils.getUserAdmin(headerAuth);
 
         const isUserTheCreatorOfArticle = await models.Article.findOne({
             attributes: ['userId', 'id'],
@@ -65,20 +54,7 @@ module.exports = {
             return res.status(404).json({error: "Invalid user"});
         }
 
-        const isUserAnAdmin = await models.User.findOne({
-            attributes: ['isAdmin'],
-            where: {id: userId}
-        })
-        .then(userFound => {
-            if(!userFound){
-                return res.status(400).json({error: 'User does not exist'});
-            }
-
-            return userFound.isAdmin;
-        })
-        .catch(err => {
-            return res.status(500).json({ err });
-        });
+        const isUserAnAdmin = jwtUtils.getUserAdmin(headerAuth);
 
         const isUserTheCreatorOfComment = await models.Comment.findOne({
             attributes: ['userId'],
