@@ -45,6 +45,30 @@ module.exports = {
         
     },
     findArticle: (req, res) => {
+        const headerAuth = req.headers['authorization'];
+        const userId = jwtUtils.getUserId(headerAuth);
+        const articleId = req.query.id;
+
+        if(userId < 0){
+            return res.status(404).json({error: "Invalid user"});
+        }
+
+        if(!articleId){
+            return res.status(400).json({error: "missing parameters"})
+        }
+
+        models.Article.findOne({
+            attributes: ['title', 'content', 'createdAt'],
+            where: {id: articleId}
+        })
+        .then(articleFound => {
+            if(!articleFound){
+                return res.status(404).json({error: 'Article does not exist'})
+            }
+
+        
+        })
+        .catch(err => res.status(500).json({ err }))
 
     },
     deleteArticle: (req, res) => {
