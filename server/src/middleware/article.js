@@ -16,7 +16,7 @@ module.exports = {
         }
 
         if(newArticle.content.length < 50){
-            res.status(400).json({ error: "Article content must contains at least 50 characters"})
+            return res.status(400).json({ error: "Article content must contains at least 50 characters"})
         }
         
         models.User.findOne({
@@ -41,13 +41,111 @@ module.exports = {
             .catch(err => res.status(500).json({ err }))
 
     },
-    listArticles: (req, res) => {
+    listArticles: async (req, res) => {
+        const headerAuth = req.headers['authorization'];
+        const userId = jwtUtils.getUserId(headerAuth);
+
+        let dataToSend = {};
+
+        //Collecting articles to send
+        const articlesToSend = await models.Article.findAll({
+            attributes: ['id', 'userId', 'title', 'content', 'createdAt'],
+            
+        })
+        .then(articlesFound => {
+            if(articlesFound.length < 1){
+                return res.status(404).json({error: 'No articles found'});
+            }
+            const articles = [];
+            articlesFound.forEach(article => {
+                articles.push(article.dataValues);
+            })
+            return articles;
+        })
+        .catch(err => res.status(500).json({ err }));
+
+        //Collecting comments to send
+        let articlesIdToFind = [];
+
+        articlesToSend.forEach(article => {
+            articlesIdToFind.push(article.id);
+        });
+
+       const commentsToSend = await models.Comment.findAll({
+           attributes: ['articleId', 'userId', 'content', 'createdAt'],
+           where: {articleId: articlesIdToFind}
+       })
+       .then(commentsFound => {
+           if(commentsFound.length < 1){
+               return null;
+           }
+           let comments = [];
+           commentsFound.forEach(comment => {
+               comments.push(comment.dataValues);
+           });
+           return comments;
+       })
+       .catch(err => res.status(500).json({ err }));
+
+        //Collecting likes to send
+        const likesToSend = await models.Like.findAll({
+            attributes: ['articleId', 'userId', 'value'],
+            where: {articleId: articlesIdToFind}
+        })
+        .then(likesFound => {
+            if(likesFound.length < 1){
+                return null;
+            }
+            let likes = [];
+            likesFound.forEach(like => {
+                likes.push(like.dataValues);
+            });
+            return likes;
+        })
+        .catch(err => res.status(500).json({ err }));
         
+        //Adding comments to relatived article
+        if(commentsToSend != null ){
+
+            articlesToSend.forEach(article => {
+                let commentsRelativeToArticle = [];
+                commentsToSend.forEach(comment => {
+                    if(comment.articleId === article.id){
+                        commentsRelativeToArticle.push(comment);
+                    }
+                });
+                article.comments = commentsRelativeToArticle;
+            });
+
+        }
+
+        //Adding likes to relatived article
+        if(likesToSend != null) {
+
+            articlesToSend.forEach(article => {
+                let likesRelativeToArticle = [];
+                likesToSend.forEach(like => {
+                    if(like.articleId === article.id){
+                        likesRelativeToArticle.push(like);
+                    }
+                });
+                article.likes = likesRelativeToArticle;
+            });
+
+        }
+
+        //Adding articles to articlesToSend
+        dataToSend.articles = articlesToSend;
+
+        res.status(200).json(dataToSend);
+
     },
-    findArticle: (req, res) => {
+    findArticle: async (req, res) => {
         const headerAuth = req.headers['authorization'];
         const userId = jwtUtils.getUserId(headerAuth);
         const articleId = req.query.id;
+
+        let dataToSend = {};
 
         if(userId < 0){
             return res.status(404).json({error: "Invalid user"});
@@ -57,34 +155,82 @@ module.exports = {
             return res.status(400).json({error: "missing parameters"})
         }
 
-        models.Article.findOne({
+        const articleToSend = await models.Article.findOne({
             attributes: ['title', 'content', 'createdAt'],
             where: {id: articleId}
         })
-        .then(articleFound => {
-            if(!articleFound){
-                return res.status(404).json({error: 'Article does not exist'})
+        .catch(err => res.status(500).json({ err }));
+
+        const commentsToSend = await models.Comment.findAll({
+            attributes: ['content', 'createdAt'],
+            where: {articleId: articleId}
+        })
+        .then(commentsFound => {
+            if(commentsFound.length < 1){
+                return null;
+            } else {
+                return commentsFound;
+            }
+        })
+        .catch(err => res.status(500).json({ err }));
+
+        const likesToSend = await models.Like.findAll({
+            attributes: ['value', 'userId'],
+            where: {articleId: articleId}
+        })
+        .then(likesFound => {
+            let likes = {
+                like: 0,
+                dislike: 0
+            };
+            let userLike = {};
+
+            if(likesFound.length < 1){
+                return null;
             }
 
-        
+            likesFound.forEach(like => {
+                if(like.userId === userId){
+                    userLike.value = like.value;
+                    likes.userLike = userLike;
+                } 
+
+                let currentNumberOfLikes = likes.like;
+                let currentNumberOfDislikes = likes.dislike;
+
+                if(like.value === false){
+                    currentNumberOfDislikes++;
+                    likes.dislike = currentNumberOfDislikes;
+                } else {
+                    currentNumberOfLikes++;
+                    likes.like = currentNumberOfLikes;
+                }
+
+            });
+
+            return likes;
+
         })
         .catch(err => res.status(500).json({ err }))
 
+
+        dataToSend.article = articleToSend;
+
+        if(commentsToSend != null){
+            dataToSend.comments = commentsToSend;
+        }
+
+        if(likesToSend != null){
+            dataToSend.likes = likesToSend;
+        }
+        
+
+
+        res.json(dataToSend);
+        
+
     },
     deleteArticle: (req, res) => {
-        const articleId = req.query.id;
-        
-        models.Comment.destroy({
-            where: {articleId : articleId}
-        }).then(() => {
-
-            models.Article.destroy({
-                where: {id: articleId}
-            })
-            .then(() => res.status(200).json({message: 'Article deleted sucessfully'}))
-            .catch(err => res.status(400).json({ err }));
-
-        })
-        .catch(err => res.status(400).json({ err }))
+       
     }
 }

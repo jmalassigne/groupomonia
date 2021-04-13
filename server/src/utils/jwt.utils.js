@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 //constants
 const SECRET_SIGN = 'ja18k9kjd01kdj7dj1278j8k4d12bv';
-const TOKEN_LIMIT = '1h';
+const TOKEN_LIMIT = '24h';
 
 
 
