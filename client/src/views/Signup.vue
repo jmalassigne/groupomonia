@@ -206,6 +206,7 @@ export default {
         password: this.form.password.text
       }
 
+
       const response = await fetch(this.url,{headers: {
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
@@ -233,18 +234,7 @@ export default {
 </script>
 
 <style scoped>
-.form-box {
-  padding: 200px;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-}
-
-.warning {
-  height: 20px;
-  width: 100%;
+.form-box{
+  margin-top: 200px;
 }
 </style>
