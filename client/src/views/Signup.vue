@@ -1,4 +1,6 @@
 <template>
+<div>
+  <Headerhome></Headerhome>
   <main>
     <form>
 
@@ -34,12 +36,20 @@
       
     </form>
   </main>
+</div>
 </template>
 
 <script>
+import Headerhome from '../components/Headerhome.vue';
+
 export default {
+  
   name: 'Signup',
+  components: {
+    Headerhome
+  },
   data() {
+  
     return {
 
       url: 'http://localhost:3000/groupomonia/users/signup',

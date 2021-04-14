@@ -1,18 +1,10 @@
 <template>
 
- <headerhome></headerhome>
  <router-view></router-view>
 
 </template>
 
 <script>
-  import Headerhome from './components/Headerhome'
-
-  export default {
-    components: {
-      Headerhome
-    }
-  }
 </script>
 
 <style>

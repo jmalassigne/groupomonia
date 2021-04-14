@@ -1,4 +1,6 @@
 <template>
+<div>
+  <Headerhome></Headerhome>
   <main>
     <form>
 
@@ -18,11 +20,17 @@
 
     </form>
   </main>
+</div>
 </template>
 
 <script>
+import Headerhome from '../components/Headerhome';
+
 export default {
   name: 'Signin',
+  components: {
+    Headerhome
+  },
   data: () => {
     return {
       url: 'http://localhost:3000/groupomonia/users/login',
