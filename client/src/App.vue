@@ -67,5 +67,5 @@ table {
 
 #app {
   font-family: 'Poppins', sans-serif;
-}
+  color: #5e5858;}
 </style>
