@@ -2,7 +2,7 @@
   <nav>
     <img src="../assets/icon-left-font-monochrome-black.png" class="logo" alt="logo">
     <div class="nav-box">
-      <router-link to="/thread" class="btn">Le mur</router-link>  
+      <router-link to="/thread" class="btn">Fil d'articles</router-link>  
       <router-link to="/" class="btn">Paramètres</router-link>
       <router-link to="/signin" class="btn btn-dcnt">Deconnexion</router-link>
     </div>

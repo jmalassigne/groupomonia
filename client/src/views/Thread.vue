@@ -4,7 +4,7 @@
   <Header></Header>
   <main>
     <aside>
-      <button><i class="fas fa-plus-square"></i>Nouvel article</button>
+      <button class="margin-bottom"><i class="fas fa-plus-square"></i>Nouvel article</button>
       <div class="bar"></div>
       <div class="search-articles">
         <button><i class="far fa-newspaper"></i>Articles les plus récents</button>
@@ -32,7 +32,7 @@ export default {
       return {
 
         showCreateArticle: true
-
+        
       }
     }
 }
@@ -55,7 +55,7 @@ aside {
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  box-shadow: -9px -15px 20px 0px rgba(0, 0, 0, 0.2) inset;
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .bar {
@@ -76,8 +76,9 @@ button {
   transition: 0.3s;
 }
 
-button:first-of-type {
+.margin-bottom {
   margin-bottom: 20px;
+
 }
 
 button:hover {

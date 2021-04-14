@@ -44,12 +44,10 @@ export default {
   methods: {
     async sendForm() {
 
-            const form = {
-                          email: this.form.email,
-                          password: this.form.password
-                        }
-
-                        console.log(JSON.stringify(form));
+    const form = {
+                  email: this.form.email,
+                  password: this.form.password
+                }
 
       const response = await fetch(this.url,{headers: {
                             'Accept': 'application/json',
@@ -62,7 +60,7 @@ export default {
                               if(res.status == 500) {
                                 return 500;
                               } else {
-                                return res;
+                                return res.json();
                               }
                             })
                             .catch(function(){ return false })
