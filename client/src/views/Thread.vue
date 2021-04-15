@@ -4,15 +4,18 @@
   <Header></Header>
   <main>
     <aside>
-      <button class="margin-bottom"><i class="fas fa-plus-square"></i>Nouvel article</button>
+      <button @click.prevent="toggle('create')" class="margin-bottom"><i class="fas fa-plus-square"></i>Nouvel article</button>
       <div class="bar"></div>
       <div class="search-articles">
-        <button><i class="far fa-newspaper"></i>Articles les plus récents</button>
-        <button><i class="far fa-thumbs-up"></i>Articles les mieux notés</button>
-        <button><i class="far fa-comments"></i>Articles les plus<br> commentés</button>
+        <button @click.prevent="toggle('recents')"><i class="far fa-newspaper"></i>Articles les plus récents</button>
+        <button @click.prevent="toggle('liked')"><i class="far fa-thumbs-up"></i>Articles les mieux notés</button>
+        <button @click.prevent="toggle('commented')"><i class="far fa-comments"></i>Articles les plus<br> commentés</button>
       </div>
     </aside>
     <CreateArticle v-if="showCreateArticle"></CreateArticle>
+    <ListArticles v-if="showListArticles" :filter="filter"></ListArticles>
+    
+
   </main>
   </div>
 
@@ -21,19 +24,73 @@
 <script>
 import Header from '../components/Header';
 import CreateArticle from '../components/CreateArticle';
+import ListArticles from '../components/ListArticles';
 
 export default {
     name: 'Thread',
     components: {
         Header,
-        CreateArticle
+        CreateArticle,
+        ListArticles,
+        
     },
     data() {
       return {
 
-        showCreateArticle: true
+        showCreateArticle: true,
+        showListArticles: false,
+        filter: ''
         
       }
+    },
+
+    methods: {
+
+      toggle(target){
+
+        switch (target) {
+
+          case 'create':
+
+            this.showCreateArticle = true;
+            this.showListArticles = false;
+            this.filter = '';
+            
+            
+            break;
+
+          case 'recents':
+
+            this.showCreateArticle = false;
+            this.showListArticles = true;
+            this.filter = 'recents';
+            
+            
+            break;
+
+          case 'commented':
+
+            this.showCreateArticle = false;
+            this.showListArticles = true;
+            this.filter = 'commented';
+            
+            
+            break;
+
+          case 'liked':
+
+            this.showCreateArticle = false;
+            this.showListArticles = true;
+            this.filter = 'liked';
+            
+            break;
+        
+          default:
+            break;
+        }
+
+      }
+
     }
 }
 </script>
@@ -49,7 +106,7 @@ main {
 
 aside {
   height: 100vh;
-  width: 250px;
+  min-width: 250px;
   padding: 30px 0 20px 15px;
   display: flex;
   flex-direction: column;
