@@ -13,7 +13,7 @@
       </div>
     </aside>
     <CreateArticle v-if="showCreateArticle"></CreateArticle>
-    <ListArticles v-if="showListArticles" :filter="filter"></ListArticles>
+    <ListArticles v-if="showListArticles" :filter="filter" @resetFilter="rstFilter()"></ListArticles>
     
 
   </main>
@@ -45,6 +45,13 @@ export default {
     },
 
     methods: {
+
+      rstFilter(){
+
+        this.filter = '';
+
+
+      },
 
       toggle(target){
 
@@ -107,6 +114,7 @@ main {
 aside {
   height: 100vh;
   min-width: 250px;
+  max-width: 250px;
   padding: 30px 0 20px 15px;
   display: flex;
   flex-direction: column;
@@ -145,6 +153,9 @@ button:hover {
 
 button:focus {
   outline: none;
+}
+
+button:active {
   background: #21A87D;
   box-shadow: none;
 }
