@@ -9,7 +9,7 @@ module.exports = {
         const content = req.body.content;
 
         if(userId < 0){
-            return res.status(404).json({error: "Invalid user"});
+            return res.status(401).json({error: "Invalid user"});
         }
 
         if(content.length > 200){

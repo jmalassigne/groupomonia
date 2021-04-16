@@ -145,6 +145,7 @@ module.exports = {
 
     },
     findArticle: async (req, res) => {
+
         const headerAuth = req.headers['authorization'];
         const userId = jwtUtils.getUserId(headerAuth);
         const articleId = req.query.id;
@@ -152,31 +153,90 @@ module.exports = {
         let dataToSend = {};
 
         if(userId < 0){
-            return res.status(404).json({error: "Invalid user"});
-        }
+                 return res.status(404).json({error: "Invalid user"});
+             }
 
         if(!articleId){
-            return res.status(400).json({error: "missing parameters"})
-        }
+                return res.status(400).json({error: "missing parameters"})
+            }
 
-        const articleToSend = await models.Article.findOne({
-            attributes: ['title', 'content', 'createdAt'],
-            where: {id: articleId}
-        })
-        .catch(err => res.status(500).json({ err }));
+         const articleToSend = await models.Article.findOne({
+             attributes: ['title', 'content', 'createdAt','userId'],
+             where: {id: articleId}
+         })
+         .catch(err => res.status(500).json({ err }));
+
+        const idOfArticleCreator = articleToSend.dataValues.userId;
+
+        const usernameOfCreator = await models.User.findOne({
+             attributes: ['username'],
+             where: {id: idOfArticleCreator}
+         })
+         .catch(err => res.status(500).json({ err }));
+
+         articleToSend.dataValues.author = usernameOfCreator;
+         delete articleToSend.dataValues.userId;
+         
+
+        
+
 
         const commentsToSend = await models.Comment.findAll({
-            attributes: ['content', 'createdAt'],
-            where: {articleId: articleId}
-        })
-        .then(commentsFound => {
-            if(commentsFound.length < 1){
-                return null;
-            } else {
+             attributes: ['content', 'createdAt', 'userId'],
+             where: {articleId: articleId}
+         })
+         .then(commentsFound => {
+             if(commentsFound.length < 1){
+                 return null;
+             } else {
+                 
                 return commentsFound;
-            }
+
+             }
+         })
+         .catch(err => res.status(500).json({ err }));
+
+
+         
+        const idsOfCreatorsOfComments = [];
+
+        commentsToSend.forEach(comment => {
+            idsOfCreatorsOfComments.push(comment.userId)
+        })
+
+        if(idsOfCreatorsOfComments.length > 0) {
+            commentsToSend.forEach(comment => {
+                idsOfCreatorsOfComments.push(comment.userId);
+            })
+        }
+
+
+        const usernameOfCreatorOfComments = await models.User.findAll({
+            attributes: ['username', 'id'],
+            where: {id: idsOfCreatorsOfComments}
         })
         .catch(err => res.status(500).json({ err }));
+
+
+       
+        commentsToSend.forEach(comment => {
+            const idOfCreatorOfComment = comment.userId;
+            
+            usernameOfCreatorOfComments.forEach(username => {
+
+                if(username.id === idOfCreatorOfComment){
+                    
+                    comment.dataValues.author = username.username;
+                    delete comment.dataValues.userId;
+                }
+
+            })
+
+        })
+         
+
+
+        
 
         const likesToSend = await models.Like.findAll({
             attributes: ['value', 'userId'],
@@ -220,8 +280,8 @@ module.exports = {
 
         dataToSend.article = articleToSend;
 
-        if(commentsToSend != null){
-            dataToSend.comments = commentsToSend;
+         if(commentsToSend != null){
+             dataToSend.comments = commentsToSend;
         }
 
         if(likesToSend != null){
