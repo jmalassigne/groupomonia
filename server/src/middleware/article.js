@@ -200,9 +200,11 @@ module.exports = {
          
         const idsOfCreatorsOfComments = [];
 
-        commentsToSend.forEach(comment => {
-            idsOfCreatorsOfComments.push(comment.userId)
-        })
+        if(commentsToSend != null) {
+            commentsToSend.forEach(comment => {
+                idsOfCreatorsOfComments.push(comment.userId)
+            })
+        }
 
         if(idsOfCreatorsOfComments.length > 0) {
             commentsToSend.forEach(comment => {
@@ -219,63 +221,87 @@ module.exports = {
 
 
        
-        commentsToSend.forEach(comment => {
-            const idOfCreatorOfComment = comment.userId;
-            
-            usernameOfCreatorOfComments.forEach(username => {
-
-                if(username.id === idOfCreatorOfComment){
-                    
-                    comment.dataValues.author = username.username;
-                    delete comment.dataValues.userId;
-                }
-
+    
+        if(commentsToSend != null) {
+            commentsToSend.forEach(comment => {
+                const idOfCreatorOfComment = comment.userId;
+                
+                usernameOfCreatorOfComments.forEach(username => {
+    
+                    if(username.id === idOfCreatorOfComment){
+                        
+                        comment.dataValues.author = username.username;
+                        delete comment.dataValues.userId;
+                    }
+    
+                })
+    
             })
-
-        })
-         
-
-
+        }
         
+         
 
         const likesToSend = await models.Like.findAll({
             attributes: ['value', 'userId'],
             where: {articleId: articleId}
-        })
-        .then(likesFound => {
-            let likes = {
-                like: 0,
-                dislike: 0
-            };
-            let userLike = {};
+        }).then(likesFound => {
 
-            if(likesFound.length < 1){
+            if(likesFound.length <= 0 ){
                 return null;
             }
 
+
+            let likes = {
+                likes: 0,
+                dislikes: 0,
+                userLike: -1
+            };
+
+
             likesFound.forEach(like => {
-                if(like.userId === userId){
-                    userLike.value = like.value;
-                    likes.userLike = userLike;
-                } 
-
-                let currentNumberOfLikes = likes.like;
-                let currentNumberOfDislikes = likes.dislike;
-
-                if(like.value === false){
+                
+                if(like.value === false) {
+                    
+                    let currentNumberOfDislikes = likes.dislikes;
                     currentNumberOfDislikes++;
-                    likes.dislike = currentNumberOfDislikes;
+                    likes.dislikes = currentNumberOfDislikes;
+
                 } else {
+
+                    let currentNumberOfLikes = likes.likes;
                     currentNumberOfLikes++;
-                    likes.like = currentNumberOfLikes;
+                    likes.likes = currentNumberOfLikes;
+                    
                 }
 
             });
 
+            let isUserAlreadyLike = false;
+
+            likesFound.forEach(like => {
+
+                if(like.userId === userId) {
+                    
+                    if(like.value === true) {
+                        likes.userLike = 1;
+                    } else {
+                        likes.userLike = 0;
+                    }
+
+                }
+
+            })
+
+
+
+            console.log(likes)
+
             return likes;
 
         })
-        .catch(err => res.status(500).json({ err }))
+        .catch(err => res.status(500).json({ err }));
+
+        
 
 
         dataToSend.article = articleToSend;
@@ -284,7 +310,7 @@ module.exports = {
              dataToSend.comments = commentsToSend;
         }
 
-        if(likesToSend != null){
+         if(likesToSend != null){
             dataToSend.likes = likesToSend;
         }
         

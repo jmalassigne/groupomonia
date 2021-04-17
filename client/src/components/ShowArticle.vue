@@ -12,8 +12,8 @@
         <div class="mentions">
             <div class="buttons">
                 <div class="likes">
-                    <button class="like"><i class="far fa-thumbs-up"></i></button>
-                    <button class="dislike"><i class="far fa-thumbs-down"></i></button>
+                    <button class="like" @click="sendLike('like')"><i class="far fa-thumbs-up"></i></button>
+                    <button class="dislike" @click="sendLike('disLike')"><i class="far fa-thumbs-down"></i></button>
                 </div>
                 <div>
                     <button class="comment" id="commentButton" v-on="buttonListener">Commenter l'article</button>
@@ -22,9 +22,9 @@
             <textarea v-if="displayCommentInput" v-model="commentContent" placeholder="Ecrivez votre commentaire ici..."></textarea>
         </div>
     </article>
-    <div v-if="showArticle">
+    <div v-if="areThereCommentsInArticle">
         <div class="header-comments"><p>Commentaires: </p><div class="comments-bar"></div></div>
-        <Comment-display v-for="comment in article.comments" :key="comment"></Comment-display>
+        <Comment-display v-for="comment in article.comments.slice().reverse()" :key="comment.date" :content="comment.content" :date="comment.createdAt" :author="comment.author"></Comment-display>
     </div>
     
 </main>
@@ -46,6 +46,10 @@ export default {
             urlGetArticle: 'http://localhost:3000/groupomonia/articles/find?id=',
             urlSendComment: 'http://localhost:3000/groupomonia/comments/create?id=',
             article: {},
+            areThereCommentsInArticle: false,
+            areThereLikesInArticle: false,
+            isUserAlreadyLike: false,
+            userLikeValue: 0,
             showArticle: false,
             displayCommentInput: false,
             commentContent: '',
@@ -53,6 +57,7 @@ export default {
 
         }
     },
+
 
     methods: {
         showCommentInput() {
@@ -148,6 +153,23 @@ export default {
                 
                 this.article = response;
                 this.showArticle = true;
+
+                const articlePropertyNames = Object.getOwnPropertyNames(response);
+
+                articlePropertyNames.forEach(key => {
+
+                    if(key === 'likes'){
+
+                        this.areThereLikesInArticle = true;
+
+                    } else if (key === 'comments') {
+
+                        this.areThereCommentsInArticle = true;
+
+                    }
+
+                })
+
                 console.log(this.article);
                 
                 }
@@ -156,10 +178,13 @@ export default {
                 alert('Une erreur est survenue, veuillez réessayer.')
 
             }
+        },
+
+        async sendLike(value){
+            console.log(value);
         }
     },
    
-
     created() {
         this.getArticle();
     },
@@ -210,7 +235,20 @@ export default {
        
     }
 
-  }
+    },
+
+    watch: {
+
+        areThereLikesInArticle: function() {
+
+            const isUserAlreadyLike = Object.getOwnPropertyNames(this.article.likes);
+            console.log(isUserAlreadyLike)
+
+        }
+
+    }
+
+
 }
 
 </script>
