@@ -26,7 +26,7 @@ export default {
   },
   data() {
     return {
-      url: "http://localhost:3000/groupomonia/articles/list",
+      url: "http://localhost:3000/groupomonia/articles/list?filter=",
       articles: {},
       articlesLoaded: false,
       displayArticle: false,
@@ -51,7 +51,7 @@ export default {
 
       const token = localStorage.getItem("token");
 
-      const response = await fetch(this.url, {
+      const response = await fetch(this.url + this.filter, {
         headers: {
           Authorization: "Bearer " + token,
           Accept: "application/json",
@@ -76,6 +76,7 @@ export default {
         } else {
           this.articles = response;
           this.articlesLoaded = true;
+          console.log(this.articles)
         }
       } else {
         alert("Une erreur est survenue, veuillez réessayer.");

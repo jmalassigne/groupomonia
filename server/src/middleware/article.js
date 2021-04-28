@@ -44,6 +44,9 @@ module.exports = {
     listArticles: async (req, res) => {
         const headerAuth = req.headers['authorization'];
         const userId = jwtUtils.getUserId(headerAuth);
+        const isUserAnAdmin = jwtUtils.getUserAdmin(headerAuth);
+        const filter = req.query.filter;
+
 
         if (userId < 0) {
             return res.status(400).json({ error: "Invalid user" });
@@ -52,93 +55,194 @@ module.exports = {
         let dataToSend = {};
 
         //Collecting articles to send
-        const articlesToSend = await models.Article.findAll({
-            attributes: ['id', 'userId', 'title', 'content', 'createdAt'],
 
+        const articlesToSend = await models.Article.findAll({
+            attributes: ['id', 'userId', 'title', 'content', 'createdAt']
         })
             .then(articlesFound => {
+
                 if (articlesFound.length < 1) {
                     return res.status(404).json({ error: 'No articles found' });
                 }
+
                 const articles = [];
+
                 articlesFound.forEach(article => {
+
+                    article.dataValues.numberOfComments = 0;
+                    article.dataValues.numberOfLikes = 0;
+                    article.dataValues.numberOfDislikes = 0;
+
+                    if (article.dataValues.userId === userId) {
+                        article.dataValues.userCanDelete = true;
+                    } else {
+
+                        if (isUserAnAdmin === true) {
+                            article.dataValues.userCanDelete = true
+                        } else {
+                            article.dataValues.userCanDelete = false;
+                        }
+                    }
+
+
+
                     articles.push(article.dataValues);
-                })
+
+                });
+
                 return articles;
+
             })
             .catch(err => res.status(500).json({ err }));
 
-        //Collecting comments to send
-        let articlesIdToFind = [];
+        const articlesIdToFind = [];
 
         articlesToSend.forEach(article => {
             articlesIdToFind.push(article.id);
-        });
+        })
 
         const commentsToSend = await models.Comment.findAll({
-            attributes: ['articleId', 'userId', 'content', 'createdAt'],
+            attributes: ['articleId'],
             where: { articleId: articlesIdToFind }
         })
             .then(commentsFound => {
+
                 if (commentsFound.length < 1) {
                     return null;
                 }
-                let comments = [];
+
+                const comments = [];
+
                 commentsFound.forEach(comment => {
                     comments.push(comment.dataValues);
                 });
+
                 return comments;
+
             })
             .catch(err => res.status(500).json({ err }));
 
-        //Collecting likes to send
+
         const likesToSend = await models.Like.findAll({
-            attributes: ['articleId', 'userId', 'value'],
+            attributes: ['articleId', 'value'],
             where: { articleId: articlesIdToFind }
         })
             .then(likesFound => {
+
                 if (likesFound.length < 1) {
                     return null;
                 }
-                let likes = [];
+
+                const likes = [];
+
                 likesFound.forEach(like => {
                     likes.push(like.dataValues);
                 });
+
                 return likes;
+
             })
             .catch(err => res.status(500).json({ err }));
 
-        //Adding comments to relatived article
-        if (commentsToSend != null) {
+        //Adding number of comments to articles
 
-            articlesToSend.forEach(article => {
-                let commentsRelativeToArticle = [];
-                commentsToSend.forEach(comment => {
-                    if (comment.articleId === article.id) {
-                        commentsRelativeToArticle.push(comment);
+        if(commentsToSend != null) {
+
+            commentsToSend.forEach(comment => {
+
+                articlesToSend.forEach(article => {
+    
+                    if(article.id === comment.articleId) {
+    
+                        let currentNumberOfComments = article.numberOfComments;
+                        currentNumberOfComments++;
+                        article.numberOfComments = currentNumberOfComments;
+    
                     }
+    
                 });
-                article.comments = commentsRelativeToArticle;
+    
             });
+    
 
         }
 
-        //Adding likes to relatived article
-        if (likesToSend != null) {
+        //Adding number of likes to articles 
 
-            articlesToSend.forEach(article => {
-                let likesRelativeToArticle = [];
-                likesToSend.forEach(like => {
-                    if (like.articleId === article.id) {
-                        likesRelativeToArticle.push(like);
+        if(likesToSend != null) {
+
+            likesToSend.forEach(like => {
+
+                articlesToSend.forEach(article => {
+    
+                    if(article.id === like.articleId) {
+
+                        if(like.value === false) {
+
+                            let currentNumberOfDislikes = article.numberOfDislikes;
+                            currentNumberOfDislikes++;
+                            article.numberOfDislikes = currentNumberOfDislikes;
+
+                        }
+
+                        if(like.value === true) {
+
+                            let currentNumberOfLikes = article.numberOfLikes;
+                            currentNumberOfLikes++;
+                            article.numberOfLikes = currentNumberOfLikes;
+
+                        }
+
                     }
-                });
-                article.likes = likesRelativeToArticle;
-            });
+    
+                })
+    
+            })
 
         }
 
-        //Adding articles to articlesToSend
+
+        //filter articlesToSend
+
+        if(filter === 'recents') {
+
+            articlesToSend.sort((a, b) => {
+                var keyA = new Date(a.createdAt),
+                    keyB = new Date(b.createdAt);
+                // Compare the 2 dates
+                if (keyA < keyB) return -1;
+                if (keyA > keyB) return 1;
+                return 0;
+              });
+
+        }
+
+        if(filter === 'commented'){
+
+            articlesToSend.sort((a, b) => {
+                var keyA = a.numberOfComments,
+                    keyB = b.numberOfComments;
+                // Compare the 2 dates
+                if (keyA < keyB) return 1;
+                if (keyA > keyB) return -1;
+                return 0;
+              });
+
+        }
+
+        if(filter === 'liked'){
+
+            articlesToSend.sort((a, b) => {
+                var keyA = a.numberOfLikes,
+                    keyB = b.numberOfLikes;
+                // Compare the 2 dates
+                if (keyA < keyB) return 1;
+                if (keyA > keyB) return -1;
+                return 0;
+              });
+
+        }
+
         dataToSend.articles = articlesToSend;
 
         res.status(200).json(dataToSend);
