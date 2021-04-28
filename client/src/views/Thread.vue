@@ -9,7 +9,7 @@
       <div class="search-articles">
         <button @click.prevent="toggle('recents')"><i class="far fa-newspaper"></i>Articles les plus récents</button>
         <button @click.prevent="toggle('liked')"><i class="far fa-thumbs-up"></i>Articles les mieux notés</button>
-        <button @click.prevent="toggle('commented')"><i class="far fa-comments"></i>Articles les plus<br> commentés</button>
+        <button @click.prevent="toggle('commented')"><i class="far fa-comments"></i>Articles les plus commentés</button>
       </div>
     </aside>
     <CreateArticle v-if="showCreateArticle"></CreateArticle>
@@ -105,8 +105,6 @@ export default {
 <style scoped>
 main {
   background: linear-gradient(145deg, #f0f0f0, #FAFAFA);
-  display: flex;
-  justify-content: flex-start;
   padding-top: 80px;
   color: #5e5858;
 }
@@ -116,6 +114,7 @@ aside {
   min-width: 250px;
   max-width: 250px;
   padding: 30px 0 20px 15px;
+  position: fixed;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -132,8 +131,11 @@ aside {
 }
 
 button {
+  display: flex;
   border: none;
   background-color: rgba(0, 0, 0, 0);
+  width: 190px;
+  text-align: left;
   margin: 3px 0;
   font-size: 13px;
   padding: 10px 12px;

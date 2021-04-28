@@ -64,7 +64,7 @@ export default {
       return date;
        
     }
-
+  
   }
    
 }
@@ -77,7 +77,7 @@ article.container {
   padding: 0;
   border-radius: 10px;
   transition: 0.3s;
-  margin-bottom: 50px;
+  margin: 0px auto 50px auto;
 }
 
 .container:hover {

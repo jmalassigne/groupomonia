@@ -5,28 +5,28 @@ module.exports = {
     createArticle: (req, res) => {
         const headerAuth = req.headers['authorization'];
         const userId = jwtUtils.getUserId(headerAuth);
-        const newArticle = {...req.body};
+        const newArticle = { ...req.body };
 
-        if(userId < 0){
-            return res.status(400).json({error: "Invalid user"});
+        if (userId < 0) {
+            return res.status(400).json({ error: "Invalid user" });
         }
 
-        if(newArticle.title.length > 50 || newArticle.title.length < 5){
-            return res.status(400).json({error: "Title must contains at least 5 characters and a maximum of 50"})
+        if (newArticle.title.length > 50 || newArticle.title.length < 5) {
+            return res.status(400).json({ error: "Title must contains at least 5 characters and a maximum of 50" })
         }
 
-        if(newArticle.content.length < 50){
-            return res.status(400).json({ error: "Article content must contains at least 50 characters"})
+        if (newArticle.content.length < 50) {
+            return res.status(400).json({ error: "Article content must contains at least 50 characters" })
         }
-        
+
         models.User.findOne({
             attributes: ['id'],
-            where: {id: userId}
+            where: { id: userId }
         })
             .then(userfound => {
 
-                if(!userfound){
-                    return res.status(400).json({error: 'Invalid user'});
+                if (!userfound) {
+                    return res.status(400).json({ error: 'Invalid user' });
                 }
 
                 models.Article.create({
@@ -34,7 +34,7 @@ module.exports = {
                     content: newArticle.content,
                     UserId: userfound.id
                 })
-                    .then(() => res.status(201).json({message: 'Article created successfuly'}))
+                    .then(() => res.status(201).json({ message: 'Article created successfuly' }))
                     .catch(err => res.status(500).json({ err }))
 
             })
@@ -45,8 +45,8 @@ module.exports = {
         const headerAuth = req.headers['authorization'];
         const userId = jwtUtils.getUserId(headerAuth);
 
-        if(userId < 0){
-            return res.status(400).json({error: "Invalid user"});
+        if (userId < 0) {
+            return res.status(400).json({ error: "Invalid user" });
         }
 
         let dataToSend = {};
@@ -54,19 +54,19 @@ module.exports = {
         //Collecting articles to send
         const articlesToSend = await models.Article.findAll({
             attributes: ['id', 'userId', 'title', 'content', 'createdAt'],
-            
+
         })
-        .then(articlesFound => {
-            if(articlesFound.length < 1){
-                return res.status(404).json({error: 'No articles found'});
-            }
-            const articles = [];
-            articlesFound.forEach(article => {
-                articles.push(article.dataValues);
+            .then(articlesFound => {
+                if (articlesFound.length < 1) {
+                    return res.status(404).json({ error: 'No articles found' });
+                }
+                const articles = [];
+                articlesFound.forEach(article => {
+                    articles.push(article.dataValues);
+                })
+                return articles;
             })
-            return articles;
-        })
-        .catch(err => res.status(500).json({ err }));
+            .catch(err => res.status(500).json({ err }));
 
         //Collecting comments to send
         let articlesIdToFind = [];
@@ -75,46 +75,46 @@ module.exports = {
             articlesIdToFind.push(article.id);
         });
 
-       const commentsToSend = await models.Comment.findAll({
-           attributes: ['articleId', 'userId', 'content', 'createdAt'],
-           where: {articleId: articlesIdToFind}
-       })
-       .then(commentsFound => {
-           if(commentsFound.length < 1){
-               return null;
-           }
-           let comments = [];
-           commentsFound.forEach(comment => {
-               comments.push(comment.dataValues);
-           });
-           return comments;
-       })
-       .catch(err => res.status(500).json({ err }));
+        const commentsToSend = await models.Comment.findAll({
+            attributes: ['articleId', 'userId', 'content', 'createdAt'],
+            where: { articleId: articlesIdToFind }
+        })
+            .then(commentsFound => {
+                if (commentsFound.length < 1) {
+                    return null;
+                }
+                let comments = [];
+                commentsFound.forEach(comment => {
+                    comments.push(comment.dataValues);
+                });
+                return comments;
+            })
+            .catch(err => res.status(500).json({ err }));
 
         //Collecting likes to send
         const likesToSend = await models.Like.findAll({
             attributes: ['articleId', 'userId', 'value'],
-            where: {articleId: articlesIdToFind}
+            where: { articleId: articlesIdToFind }
         })
-        .then(likesFound => {
-            if(likesFound.length < 1){
-                return null;
-            }
-            let likes = [];
-            likesFound.forEach(like => {
-                likes.push(like.dataValues);
-            });
-            return likes;
-        })
-        .catch(err => res.status(500).json({ err }));
-        
+            .then(likesFound => {
+                if (likesFound.length < 1) {
+                    return null;
+                }
+                let likes = [];
+                likesFound.forEach(like => {
+                    likes.push(like.dataValues);
+                });
+                return likes;
+            })
+            .catch(err => res.status(500).json({ err }));
+
         //Adding comments to relatived article
-        if(commentsToSend != null ){
+        if (commentsToSend != null) {
 
             articlesToSend.forEach(article => {
                 let commentsRelativeToArticle = [];
                 commentsToSend.forEach(comment => {
-                    if(comment.articleId === article.id){
+                    if (comment.articleId === article.id) {
                         commentsRelativeToArticle.push(comment);
                     }
                 });
@@ -124,12 +124,12 @@ module.exports = {
         }
 
         //Adding likes to relatived article
-        if(likesToSend != null) {
+        if (likesToSend != null) {
 
             articlesToSend.forEach(article => {
                 let likesRelativeToArticle = [];
                 likesToSend.forEach(like => {
-                    if(like.articleId === article.id){
+                    if (like.articleId === article.id) {
                         likesRelativeToArticle.push(like);
                     }
                 });
@@ -152,61 +152,61 @@ module.exports = {
 
         let dataToSend = {};
 
-        if(userId < 0){
-                 return res.status(404).json({error: "Invalid user"});
-             }
+        if (userId < 0) {
+            return res.status(404).json({ error: "Invalid user" });
+        }
 
-        if(!articleId){
-                return res.status(400).json({error: "missing parameters"})
-            }
+        if (!articleId) {
+            return res.status(400).json({ error: "missing parameters" })
+        }
 
-         const articleToSend = await models.Article.findOne({
-             attributes: ['title', 'content', 'createdAt','userId'],
-             where: {id: articleId}
-         })
-         .catch(err => res.status(500).json({ err }));
+        const articleToSend = await models.Article.findOne({
+            attributes: ['title', 'content', 'createdAt', 'userId'],
+            where: { id: articleId }
+        })
+            .catch(err => res.status(500).json({ err }));
 
         const idOfArticleCreator = articleToSend.dataValues.userId;
 
         const usernameOfCreator = await models.User.findOne({
-             attributes: ['username'],
-             where: {id: idOfArticleCreator}
-         })
-         .catch(err => res.status(500).json({ err }));
+            attributes: ['username'],
+            where: { id: idOfArticleCreator }
+        })
+            .catch(err => res.status(500).json({ err }));
 
-         articleToSend.dataValues.author = usernameOfCreator;
-         delete articleToSend.dataValues.userId;
-         
+        articleToSend.dataValues.author = usernameOfCreator;
+        delete articleToSend.dataValues.userId;
 
-        
+
+
 
 
         const commentsToSend = await models.Comment.findAll({
-             attributes: ['content', 'createdAt', 'userId'],
-             where: {articleId: articleId}
-         })
-         .then(commentsFound => {
-             if(commentsFound.length < 1){
-                 return null;
-             } else {
-                 
-                return commentsFound;
+            attributes: ['content', 'createdAt', 'userId'],
+            where: { articleId: articleId }
+        })
+            .then(commentsFound => {
+                if (commentsFound.length < 1) {
+                    return null;
+                } else {
 
-             }
-         })
-         .catch(err => res.status(500).json({ err }));
+                    return commentsFound;
+
+                }
+            })
+            .catch(err => res.status(500).json({ err }));
 
 
-         
+
         const idsOfCreatorsOfComments = [];
 
-        if(commentsToSend != null) {
+        if (commentsToSend != null) {
             commentsToSend.forEach(comment => {
                 idsOfCreatorsOfComments.push(comment.userId)
             })
         }
 
-        if(idsOfCreatorsOfComments.length > 0) {
+        if (idsOfCreatorsOfComments.length > 0) {
             commentsToSend.forEach(comment => {
                 idsOfCreatorsOfComments.push(comment.userId);
             })
@@ -215,38 +215,38 @@ module.exports = {
 
         const usernameOfCreatorOfComments = await models.User.findAll({
             attributes: ['username', 'id'],
-            where: {id: idsOfCreatorsOfComments}
+            where: { id: idsOfCreatorsOfComments }
         })
-        .catch(err => res.status(500).json({ err }));
+            .catch(err => res.status(500).json({ err }));
 
 
-       
-    
-        if(commentsToSend != null) {
+
+
+        if (commentsToSend != null) {
             commentsToSend.forEach(comment => {
                 const idOfCreatorOfComment = comment.userId;
-                
+
                 usernameOfCreatorOfComments.forEach(username => {
-    
-                    if(username.id === idOfCreatorOfComment){
-                        
+
+                    if (username.id === idOfCreatorOfComment) {
+
                         comment.dataValues.author = username.username;
                         delete comment.dataValues.userId;
                     }
-    
+
                 })
-    
+
             })
         }
-        
-         
+
+
 
         const likesToSend = await models.Like.findAll({
             attributes: ['value', 'userId'],
-            where: {articleId: articleId}
+            where: { articleId: articleId }
         }).then(likesFound => {
 
-            if(likesFound.length <= 0 ){
+            if (likesFound.length <= 0) {
                 return null;
             }
 
@@ -259,9 +259,9 @@ module.exports = {
 
 
             likesFound.forEach(like => {
-                
-                if(like.value === false) {
-                    
+
+                if (like.value === false) {
+
                     let currentNumberOfDislikes = likes.dislikes;
                     currentNumberOfDislikes++;
                     likes.dislikes = currentNumberOfDislikes;
@@ -271,7 +271,7 @@ module.exports = {
                     let currentNumberOfLikes = likes.likes;
                     currentNumberOfLikes++;
                     likes.likes = currentNumberOfLikes;
-                    
+
                 }
 
             });
@@ -280,9 +280,9 @@ module.exports = {
 
             likesFound.forEach(like => {
 
-                if(like.userId === userId) {
-                    
-                    if(like.value === true) {
+                if (like.userId === userId) {
+
+                    if (like.value === true) {
                         likes.userLike = 1;
                     } else {
                         likes.userLike = 0;
@@ -299,28 +299,28 @@ module.exports = {
             return likes;
 
         })
-        .catch(err => res.status(500).json({ err }));
+            .catch(err => res.status(500).json({ err }));
 
-        
+
 
 
         dataToSend.article = articleToSend;
 
-         if(commentsToSend != null){
-             dataToSend.comments = commentsToSend;
+        if (commentsToSend != null) {
+            dataToSend.comments = commentsToSend;
         }
 
-         if(likesToSend != null){
+        if (likesToSend != null) {
             dataToSend.likes = likesToSend;
         }
-        
+
 
 
         res.json(dataToSend);
-        
+
 
     },
     deleteArticle: (req, res) => {
-       
+
     }
 }

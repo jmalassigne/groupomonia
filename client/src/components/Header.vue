@@ -4,14 +4,26 @@
     <div class="nav-box">
       <router-link to="/thread" class="btn">Fil d'articles</router-link>  
       <router-link to="/" class="btn">Paramètres</router-link>
-      <router-link to="/signin" class="btn btn-dcnt">Deconnexion</router-link>
+      <button class="btn btn-dcnt" @click.prevent="closeSession">Deconnexion</button>
     </div>
   </nav>
 </template>
 
 <script>
+import Router from '../router/index'
+
 export default {
-    name:'Header'
+    name:'Header',
+    methods: {
+
+      closeSession() {
+
+        localStorage.removeItem('token');
+        Router.push('/');
+
+      }
+
+    }
 }
 </script>
 
@@ -52,6 +64,9 @@ nav {
 
 .btn-dcnt {
     background: #FF7272;
+    border: none;
+    font-size: 17px;
+    font-weight: 800;
 }
 
 .btn:hover {
@@ -63,6 +78,7 @@ nav {
 
 .btn-dcnt:hover {
     background: #EE6161;
+    cursor: pointer;
 }
 
 

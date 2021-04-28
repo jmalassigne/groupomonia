@@ -41,6 +41,7 @@
 
 <script>
 import Headerhome from '../components/Headerhome.vue';
+import Router from '../router/index';
 
 export default {
   
@@ -239,7 +240,10 @@ export default {
                             .catch(function(){ return false })
 
       if(response != false){
+
         localStorage.setItem('token', response.token);
+        Router.push({path: '/thread'});
+
       } else {
         
         alert('Une erreur est survenue, veuillez réessayer.')

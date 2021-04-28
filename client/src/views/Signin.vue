@@ -25,6 +25,7 @@
 
 <script>
 import Headerhome from '../components/Headerhome';
+import Router from '../router/index';
 
 export default {
   name: 'Signin',
@@ -71,6 +72,7 @@ export default {
           this.wrongUser();
         } else {
           localStorage.setItem('token', response.token);
+          Router.push({path: '/thread'});
         }
       } else {
         

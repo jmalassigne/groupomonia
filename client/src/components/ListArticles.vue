@@ -1,128 +1,105 @@
 <template>
-    <div class="container">
-
-      <div class="list-container" v-if="articlesLoaded">
-          
-          <Article-pattern v-for="article in articles.articles" :key="article.id" :articleData="article" @showArticle="showOneArticle"></Article-pattern>
-          
-      </div>
-
-      <ShowArticle v-if="displayArticle" :id="idToDisplay"></ShowArticle>
-        
+  <div class="container">
+    <div class="list-container" v-if="articlesLoaded">
+      <Article-pattern
+        v-for="article in articles.articles"
+        :key="article.id"
+        :articleData="article"
+        @showArticle="showOneArticle"
+      ></Article-pattern>
     </div>
+
+    <ShowArticle v-if="displayArticle" :id="idToDisplay"></ShowArticle>
+  </div>
 </template>
 
 <script>
-
-import ArticlePattern from './ArticlePattern';
-import ShowArticle from './ShowArticle';
+import ArticlePattern from "./ArticlePattern";
+import ShowArticle from "./ShowArticle";
 
 export default {
+  name: "ListArticles",
+  props: ["filter"],
+  components: {
+    ArticlePattern,
+    ShowArticle,
+  },
+  data() {
+    return {
+      url: "http://localhost:3000/groupomonia/articles/list",
+      articles: {},
+      articlesLoaded: false,
+      displayArticle: false,
+      idToDisplay: "",
+    };
+  },
 
-    name: 'ListArticles',
-    props: ['filter'],
-    components: {
-        ArticlePattern,
-        ShowArticle
+  methods: {
+    showOneArticle(id) {
+      this.idToDisplay = id.currentTarget.dataset.id;
+
+      this.articlesLoaded = false;
+
+      this.$emit("resetFilter");
+
+      this.displayArticle = true;
     },
-    data() {
-      
-     return {
-            url: 'http://localhost:3000/groupomonia/articles/list',
-            articles: {},
-            articlesLoaded: false,
-            displayArticle: false,
-            idToDisplay : ''
-            
-        }
-    },
 
+    async loadingList() {
+      this.articlesLoaded = false;
+      this.displayArticle = false;
 
-    methods: {
+      const token = localStorage.getItem("token");
 
-        showOneArticle(id){
-
-          this.idToDisplay = id.currentTarget.dataset.id;
-        
-          this.articlesLoaded = false;
-
-          this.$emit('resetFilter');
-          
-          this.displayArticle = true;
-
-          
-
+      const response = await fetch(this.url, {
+        headers: {
+          Authorization: "Bearer " + token,
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
-        
-        async loadingList(){
-
-          this.articlesLoaded = false;
-          this.displayArticle = false;
-
-          const token = localStorage.getItem('token');
-
-          const response = await fetch(this.url,{headers: {
-                              'Authorization': 'Bearer ' + token,
-                              'Accept': 'application/json',
-                              'Content-Type': 'application/json'
-                            },
-                                method: "GET"
-                              
-                            })
-                              .then(function(res){ 
-                                if(res.status == 500) {
-                                  return 500;
-                                } else {
-                                  return res.json();
-                                }
-                              })
-                              .catch(function(){ return false })
-
-
-          if(response != false){
-              if(response === 500) {
-              alert('Une erreur est survenue, veuillez réessayer.')
-              } else {
-              this.articles = response;
-              this.articlesLoaded = true;
-              }
+        method: "GET",
+      })
+        .then(function (res) {
+          if (res.status == 500) {
+            return 500;
           } else {
-              
-              alert('Une erreur est survenue, veuillez réessayer.')
-
+            return res.json();
           }
+        })
+        .catch(function () {
+          return false;
+        });
 
+      if (response != false) {
+        if (response === 500) {
+          alert("Une erreur est survenue, veuillez réessayer.");
+        } else {
+          this.articles = response;
+          this.articlesLoaded = true;
         }
-
-
-    
+      } else {
+        alert("Une erreur est survenue, veuillez réessayer.");
+      }
     },
+  },
 
-    created() {
+  created() {
+    this.loadingList();
+  },
 
-        this.loadingList();
-        
-    },
-
-   watch: {
-    
+  watch: {
     filter: function () {
-      
-      if(this.filter != ''){
+      if (this.filter != "") {
         this.loadingList();
       }
-
-    }
-
-  }
-    
-}
+    },
+  },
+};
 </script>
 
 <style scoped>
-
 .container {
-    padding: 50px 80px;
+  padding: 50px 80px;
+  margin-left: 265px;
 }
-
 </style>

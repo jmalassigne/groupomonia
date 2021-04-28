@@ -12,8 +12,17 @@
         <div class="mentions">
             <div class="buttons">
                 <div class="likes">
-                    <button class="like" @click="sendLike('like')"><i class="far fa-thumbs-up"></i></button>
-                    <button class="dislike" @click="sendLike('disLike')"><i class="far fa-thumbs-down"></i></button>
+
+                    <div class="block-button">
+                        <button class="like" @click="sendLike(1)"><i class="far fa-thumbs-up"></i></button>
+                        <p v-if="areThereLikesInArticle">{{article.likes.likes}}</p><p v-else>0</p>
+                    </div>
+                    
+                    <div class="block-button">
+                        <button class="dislike" @click="sendLike(0)"><i class="far fa-thumbs-down"></i></button>
+                        <p v-if="areThereLikesInArticle">{{article.likes.dislikes}}</p><p v-else>0</p>
+                    </div>
+                    
                 </div>
                 <div>
                     <button class="comment" id="commentButton" v-on="buttonListener">Commenter l'article</button>
@@ -45,11 +54,12 @@ export default {
 
             urlGetArticle: 'http://localhost:3000/groupomonia/articles/find?id=',
             urlSendComment: 'http://localhost:3000/groupomonia/comments/create?id=',
+            urlSendLike: 'http://localhost:3000/groupomonia/likes/create?id=',
+            urlDeleteLike: 'http://localhost:3000/groupomonia/likes/delete-like?id=',
             article: {},
             areThereCommentsInArticle: false,
             areThereLikesInArticle: false,
-            isUserAlreadyLike: false,
-            userLikeValue: 0,
+            userLikeValue: null,
             showArticle: false,
             displayCommentInput: false,
             commentContent: '',
@@ -107,11 +117,12 @@ export default {
                 } else {
                 
                     console.log(response);
+                    this.areThereCommentsInArticle = false;
+                    this.showArticle = false;
+                    this.article = {};
                     this.commentContent = '';
                     this.displayCommentInput = false;
                     this.commentButtonBehavior = false;
-                    this.showArticle = false;
-                    this.article = {};
                     this.getArticle();
                 
                 }
@@ -128,6 +139,7 @@ export default {
 
             const token = localStorage.getItem('token');
 
+           
             const response = await fetch(this.urlGetArticle + id,{headers: {
                                 'Authorization': 'Bearer ' + token,
                                 'Accept': 'application/json',
@@ -145,32 +157,35 @@ export default {
                                 })
                                 .catch(function(){ return false })
 
-
             if(response != false){
                 if(response === 500) {
                 alert('Une erreur est survenue, veuillez réessayer.')
                 } else {
+
+                
                 
                 this.article = response;
                 this.showArticle = true;
+                
 
                 const articlePropertyNames = Object.getOwnPropertyNames(response);
 
-                articlePropertyNames.forEach(key => {
+                        
+                    articlePropertyNames.forEach(key => {
 
-                    if(key === 'likes'){
-
-                        this.areThereLikesInArticle = true;
-
-                    } else if (key === 'comments') {
+                    
+                    if (key === 'comments') {
 
                         this.areThereCommentsInArticle = true;
+
+                    } else if (key === 'likes'){
+
+                        this.areThereLikesInArticle = true;
 
                     }
 
                 })
 
-                console.log(this.article);
                 
                 }
             } else {
@@ -180,14 +195,126 @@ export default {
             }
         },
 
-        async sendLike(value){
-            console.log(value);
+        sendLike(value){
+            
+            const newValue = value;
+            const currentValue = this.userLikeValue;
+
+            if(newValue === currentValue){
+
+                this.userLikeValue = null;
+                this.deleteLike();
+
+            } else {
+
+                if(newValue === 0) {
+
+                    this.userLikeValue = 0;
+                    this.createLike(0);
+
+
+                } else if(newValue === 1) {
+
+                    this.userLikeValue = 1;
+                    this.createLike(1);
+                   
+                }
+
+            }
+
+        },
+
+        async createLike (value) {
+
+            const articleId = this.id;
+
+            const form = {likeValue: value};
+
+            console.log(form)
+
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(this.urlSendLike + articleId,{headers: {
+                                'Authorization': 'Bearer ' + token,
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                                method: "POST",
+                                body: JSON.stringify(form)
+                                
+                            })
+                                .then(function(res){ 
+                                if(res.status == 500) {
+                                    return 500;
+                                } else {
+                                    return res.json();
+                                }
+                                })
+                                .catch(function(){ return false })
+
+
+            if(response != false){
+                if(response === 500) {
+                alert('Une erreur est survenue, veuillez réessayer.')
+                } else {
+                
+                    console.log(response)
+                
+                }
+            } else {
+                
+                alert('Une erreur est survenue, veuillez réessayer.')
+
+            }
+
+        },
+
+        async deleteLike() {
+
+            const articleId = this.id;
+
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(this.urlDeleteLike + articleId,{headers: {
+                                'Authorization': 'Bearer ' + token,
+                                'Accept': 'application/json',
+                                'Content-Type': 'application/json'
+                            },
+                                method: "DELETE"
+                                
+                            })
+                                .then(function(res){ 
+                                if(res.status == 500) {
+                                    return 500;
+                                } else {
+                                    return res.json();
+                                }
+                                })
+                                .catch(function(){ return false })
+
+
+            if(response != false){
+                if(response === 500) {
+                alert('Une erreur est survenue, veuillez réessayer.')
+                } else {
+                
+                    console.log(response)
+                
+                }
+            } else {
+                
+                alert('Une erreur est survenue, veuillez réessayer.')
+
+            }
+
+
         }
     },
    
     created() {
         this.getArticle();
     },
+
 
     computed: {
 
@@ -241,11 +368,47 @@ export default {
 
         areThereLikesInArticle: function() {
 
-            const isUserAlreadyLike = Object.getOwnPropertyNames(this.article.likes);
-            console.log(isUserAlreadyLike)
+            const isUserAlreadyLike = this.article.likes.userLike;
+
+            if(isUserAlreadyLike != -1){
+                
+                isUserAlreadyLike == 0 ? this.userLikeValue = 0 : this.userLikeValue = 1;
+
+            }
+
+        },
+
+        userLikeValue: function(value) {
+
+            this.$nextTick(() => {
+                const likeButton = document.querySelector('.like');
+                const dislikeButton = document.querySelector('.dislike');
+
+                if(value === null) {
+
+                    dislikeButton.className = 'dislike';
+                    likeButton.className = 'like'
+                    
+                } else {
+                    if(value === 0) {
+
+                        dislikeButton.classList.add('active');
+                        likeButton.className = 'like'
+
+                    } else if (value === 1) {
+
+                        likeButton.classList.add('active');
+                        dislikeButton.className = 'dislike'
+
+                    }
+
+                }
+
+            });
+
 
         }
-
+        
     }
 
 
@@ -306,6 +469,11 @@ h2 {
     justify-content: space-between;
 }
 
+.likes {
+    display: flex;
+    align-items: center;
+}
+
 textarea {
     margin-top: 10px;
     border: none;
@@ -318,6 +486,11 @@ textarea:focus {
     border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
+.block-button {
+    display: flex;
+    align-items: center;
+}
+
 button {
     border: none;
     padding: 5px 10px;
@@ -326,7 +499,7 @@ button {
 
 .likes button {
     background: rgba(0, 0, 0, 0);
-    margin: 0 5px;
+    margin: 0 0 0 15px;
     border-radius: 5px;
 }
 
@@ -344,6 +517,23 @@ button {
 
 .likes .dislike:hover {
     background: #FF7272;
+}
+
+.likes .dislike.active i{
+    color: #FF7272;
+}
+
+.likes .dislike.active:hover i{
+    color: black;
+}
+
+.likes .like.active i{
+    color: #21A87D;
+}
+
+.likes .like.active:hover i{
+    color: black
+    ;
 }
 
 .likes button i {
