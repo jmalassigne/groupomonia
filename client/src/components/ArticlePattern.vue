@@ -1,7 +1,7 @@
 <template>
     <article class="container" :data-id="id" @click="(id) => $emit('showArticle',id)">
       <div class="prez">
-        <p class="username">{{articleData.id}}</p>
+        <p class="username">{{articleData.author}}</p>
         <p class="date">{{dateConverted}}</p>
       </div>
       <div class="content">
@@ -10,11 +10,11 @@
       </div>
       <div class="mentions">
         <div class="likes">
-          <p class="margin-right"><i class="far fa-thumbs-up"></i> 2</p>
-          <p><i class="far fa-thumbs-down"></i> 3</p>
+          <p class="margin-right"><i class="far fa-thumbs-up"></i> {{articleData.numberOfLikes}}</p>
+          <p><i class="far fa-thumbs-down"></i> {{articleData.numberOfDislikes}}</p>
         </div>
         <div class="comments">
-          <p><i class="far fa-comments"></i> 10 commentaires</p>
+          <p><i class="far fa-comments"></i> {{ articleData.numberOfComments}} commentaires</p>
         </div>
       </div>
     </article>

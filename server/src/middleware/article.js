@@ -69,6 +69,10 @@ module.exports = {
 
                 articlesFound.forEach(article => {
 
+                    const currentContentOfArticle = article.dataValues.content;
+                    const newContentOfArticle = currentContentOfArticle.substr(0, 250);
+                    article.dataValues.content = newContentOfArticle + '...';
+
                     article.dataValues.numberOfComments = 0;
                     article.dataValues.numberOfLikes = 0;
                     article.dataValues.numberOfDislikes = 0;
@@ -95,11 +99,39 @@ module.exports = {
             })
             .catch(err => res.status(500).json({ err }));
 
+
+        const usersIdToFind = [];
         const articlesIdToFind = [];
 
         articlesToSend.forEach(article => {
             articlesIdToFind.push(article.id);
+            usersIdToFind.push(article.userId);
+        });
+
+
+
+        const usersToSend = await models.User.findAll({
+            attributes: ['username', 'id'],
+            where: { id: usersIdToFind }
         })
+            .then(usersFound => {
+
+                if (usersFound.length < 1) {
+                    return null;
+                }
+
+                let users = [];
+
+                usersFound.forEach(user => {
+                    users.push( {id: user.dataValues.id, username: user.dataValues.username });
+                });
+
+                return users;
+
+            })
+            .catch(err => res.status(500).json({ err }));
+
+
 
         const commentsToSend = await models.Comment.findAll({
             attributes: ['articleId'],
@@ -144,40 +176,64 @@ module.exports = {
             })
             .catch(err => res.status(500).json({ err }));
 
+
+
+        //Adding users to articles
+
+
+        if(usersToSend != null) {
+
+            usersToSend.forEach(user => {
+
+                articlesToSend.forEach(article => {
+
+                    if(article.userId === user.id) {
+
+                        article.author = user.username;
+                        delete article.userId;
+
+                    }
+
+                })
+
+            })
+
+        }
+
         //Adding number of comments to articles
 
-        if(commentsToSend != null) {
+        if (commentsToSend != null) {
 
             commentsToSend.forEach(comment => {
 
                 articlesToSend.forEach(article => {
-    
-                    if(article.id === comment.articleId) {
-    
+
+                    if (article.id === comment.articleId) {
+
                         let currentNumberOfComments = article.numberOfComments;
                         currentNumberOfComments++;
                         article.numberOfComments = currentNumberOfComments;
-    
+
                     }
-    
+
                 });
-    
+
             });
-    
+
 
         }
 
         //Adding number of likes to articles 
 
-        if(likesToSend != null) {
+        if (likesToSend != null) {
 
             likesToSend.forEach(like => {
 
                 articlesToSend.forEach(article => {
-    
-                    if(article.id === like.articleId) {
 
-                        if(like.value === false) {
+                    if (article.id === like.articleId) {
+
+                        if (like.value === false) {
 
                             let currentNumberOfDislikes = article.numberOfDislikes;
                             currentNumberOfDislikes++;
@@ -185,7 +241,7 @@ module.exports = {
 
                         }
 
-                        if(like.value === true) {
+                        if (like.value === true) {
 
                             let currentNumberOfLikes = article.numberOfLikes;
                             currentNumberOfLikes++;
@@ -194,9 +250,9 @@ module.exports = {
                         }
 
                     }
-    
+
                 })
-    
+
             })
 
         }
@@ -204,20 +260,20 @@ module.exports = {
 
         //filter articlesToSend
 
-        if(filter === 'recents') {
+        if (filter === 'recents') {
 
             articlesToSend.sort((a, b) => {
                 var keyA = new Date(a.createdAt),
                     keyB = new Date(b.createdAt);
                 // Compare the 2 dates
-                if (keyA < keyB) return -1;
-                if (keyA > keyB) return 1;
+                if (keyA < keyB) return 1;
+                if (keyA > keyB) return -1;
                 return 0;
-              });
+            });
 
         }
 
-        if(filter === 'commented'){
+        if (filter === 'commented') {
 
             articlesToSend.sort((a, b) => {
                 var keyA = a.numberOfComments,
@@ -226,11 +282,11 @@ module.exports = {
                 if (keyA < keyB) return 1;
                 if (keyA > keyB) return -1;
                 return 0;
-              });
+            });
 
         }
 
-        if(filter === 'liked'){
+        if (filter === 'liked') {
 
             articlesToSend.sort((a, b) => {
                 var keyA = a.numberOfLikes,
@@ -239,7 +295,7 @@ module.exports = {
                 if (keyA < keyB) return 1;
                 if (keyA > keyB) return -1;
                 return 0;
-              });
+            });
 
         }
 

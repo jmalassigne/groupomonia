@@ -2,7 +2,7 @@
 <main>
     <article class="container" v-if="showArticle">
         <div class="prez">
-            <p class="username"> De Jean</p>
+            <p class="username">{{ article.article.author.username }}</p>
             <p class="date">{{dateConverted}}</p>
         </div>
         <div class="article-container">
@@ -166,6 +166,7 @@ export default {
                 
                 this.article = response;
                 this.showArticle = true;
+                this.userLikeValue = null;
                 
 
                 const articlePropertyNames = Object.getOwnPropertyNames(response);
@@ -200,27 +201,25 @@ export default {
             const newValue = value;
             const currentValue = this.userLikeValue;
 
-            if(newValue === currentValue){
 
-                this.userLikeValue = null;
+            if(newValue === currentValue){
+                
                 this.deleteLike();
 
             } else {
 
                 if(newValue === 0) {
-
-                    this.userLikeValue = 0;
+                  
                     this.createLike(0);
-
 
                 } else if(newValue === 1) {
 
-                    this.userLikeValue = 1;
                     this.createLike(1);
                    
                 }
 
             }
+            
 
         },
 
@@ -257,8 +256,11 @@ export default {
                 if(response === 500) {
                 alert('Une erreur est survenue, veuillez réessayer.')
                 } else {
-                
-                    console.log(response)
+                    
+                    console.log(response);
+                    this.areThereLikesInArticle = false;
+                    this.userLikeValue = null;
+                    this.getArticle();
                 
                 }
             } else {
@@ -297,8 +299,11 @@ export default {
                 if(response === 500) {
                 alert('Une erreur est survenue, veuillez réessayer.')
                 } else {
-                
-                    console.log(response)
+                    
+                    console.log(response);
+                    this.areThereLikesInArticle = false;
+                    this.userLikeValue = null;
+                    this.getArticle();
                 
                 }
             } else {
@@ -374,8 +379,7 @@ export default {
                 
                 isUserAlreadyLike == 0 ? this.userLikeValue = 0 : this.userLikeValue = 1;
 
-            }
-
+            } 
         },
 
         userLikeValue: function(value) {
