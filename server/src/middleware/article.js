@@ -123,7 +123,7 @@ module.exports = {
                 let users = [];
 
                 usersFound.forEach(user => {
-                    users.push( {id: user.dataValues.id, username: user.dataValues.username });
+                    users.push({ id: user.dataValues.id, username: user.dataValues.username });
                 });
 
                 return users;
@@ -181,13 +181,13 @@ module.exports = {
         //Adding users to articles
 
 
-        if(usersToSend != null) {
+        if (usersToSend != null) {
 
             usersToSend.forEach(user => {
 
                 articlesToSend.forEach(article => {
 
-                    if(article.userId === user.id) {
+                    if (article.userId === user.id) {
 
                         article.author = user.username;
                         delete article.userId;
@@ -308,6 +308,7 @@ module.exports = {
 
         const headerAuth = req.headers['authorization'];
         const userId = jwtUtils.getUserId(headerAuth);
+        const isUserAnAdmin = jwtUtils.getUserAdmin(headerAuth);
         const articleId = req.query.id;
 
         let dataToSend = {};
@@ -386,6 +387,12 @@ module.exports = {
             commentsToSend.forEach(comment => {
                 const idOfCreatorOfComment = comment.userId;
 
+                if(comment.dataValues.userId === userId || isUserAnAdmin){
+                    comment.dataValues.userCanDelete = true;
+                } else {
+                    comment.dataValues.userCanDelete = false;
+                }
+
                 usernameOfCreatorOfComments.forEach(username => {
 
                     if (username.id === idOfCreatorOfComment) {
@@ -436,7 +443,6 @@ module.exports = {
 
             });
 
-            let isUserAlreadyLike = false;
 
             likesFound.forEach(like => {
 
@@ -453,8 +459,6 @@ module.exports = {
             })
 
 
-
-            console.log(likes)
 
             return likes;
 
@@ -481,6 +485,25 @@ module.exports = {
 
     },
     deleteArticle: (req, res) => {
+
+        const articleId = req.query.id;
+
+        models.Like.destroy({
+            where: {articleId: articleId}
+        })
+        .catch(err => res.status(500).json({ err }));
+
+        models.Comment.destroy({
+            where: {articleId: articleId}
+        })
+        .catch(err => res.status(500).json({ err }));
+
+
+        models.Article.destroy({
+            where: {id: articleId}
+        })
+        .then(() => res.status(200).json({message: "Article deleted successfully"}))
+        .catch(err => res.status(500).json({ err }));
 
     }
 }

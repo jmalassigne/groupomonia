@@ -30,6 +30,7 @@ export default {
 <style scoped>
 nav {
   position: fixed;
+  z-index: 1000;
   height: 80px;
   width: 100%;
   display: flex;
