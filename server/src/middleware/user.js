@@ -12,35 +12,35 @@ const USERNAME_REGEX = /^[a-zA-Z]{5,50}$/;
 
 module.exports = {
     signup: (req, res) => {
-        const newUser = {...req.body};
+        const newUser = { ...req.body };
 
-        if(!PASSWORD_REGEX.test(newUser.password)){
-            return res.status(401).json({error: "Password must contains at least eight characters, one numeric digit, one uppercase and one lowercase letter"});
-        } 
+        if (!PASSWORD_REGEX.test(newUser.password)) {
+            return res.status(401).json({ error: "Password must contains at least eight characters, one numeric digit, one uppercase and one lowercase letter" });
+        }
 
-        if(!EMAIL_REGEX.test(newUser.email)){
-            return res.status(401).json({error: "Invalid email"});
-        } 
+        if (!EMAIL_REGEX.test(newUser.email)) {
+            return res.status(401).json({ error: "Invalid email" });
+        }
 
-        if(!USERNAME_REGEX.test(newUser.username)){
-            return res.status(401).json({error: "Username must contains at least 5 characters and a maximum of 50 without any numeric digit or special characters"});
-        } 
+        if (!USERNAME_REGEX.test(newUser.username)) {
+            return res.status(401).json({ error: "Username must contains at least 5 characters and a maximum of 50 without any numeric digit or special characters" });
+        }
 
         models.User.findOne({
-            where: {email: newUser.email}
+            where: { email: newUser.email }
         })
             .then(userFound => {
-                if(userFound){
-                    return res.status(400).json({error: 'User already exist'})
+                if (userFound) {
+                    return res.status(400).json({ error: 'User already exist' })
                 }
 
                 models.User.findOne({
-                    where: {username: newUser.username}
+                    where: { username: newUser.username }
                 })
                     .then(usernameFound => {
 
-                        if(usernameFound){
-                            return res.status(400).json({error: 'Username already exist'})
+                        if (usernameFound) {
+                            return res.status(400).json({ error: 'Username already exist' })
                         }
 
                         bcrypt.hash(newUser.password, 10)
@@ -63,26 +63,26 @@ module.exports = {
                     .catch(err => res.status(500).json({ err }))
             })
             .catch(err => res.status(500).json({ err }))
-        
+
     },
     login: (req, res) => {
-        const userInfos = {...req.body};
+        const userInfos = { ...req.body };
 
         models.User.findOne({
             attributes: ['id', 'password', 'isAdmin'],
-            where: {email: userInfos.email}
+            where: { email: userInfos.email }
         })
             .then(userFound => {
 
-                if(!userFound){
-                    return res.status(500).json({error: "User does not exist"})
+                if (!userFound) {
+                    return res.status(500).json({ error: "User does not exist" })
                 }
 
                 bcrypt.compare(userInfos.password, userFound.password)
                     .then(isValid => {
 
-                        if(!isValid){
-                            return res.status(400).json({error: 'Invalid password'})
+                        if (!isValid) {
+                            return res.status(400).json({ error: 'Invalid password' })
                         }
 
                         res.status(200).json({
@@ -94,9 +94,83 @@ module.exports = {
 
             })
             .catch(err => res.status(500).json({ err }))
-         
+
     },
     deleteAccount: (req, res) => {
 
+    },
+    getUser: async (req, res) => {
+        const headerAuth = req.headers['authorization'];
+        const userId = jwtUtils.getUserId(headerAuth);
+
+        if (userId < 0) {
+            return res.status(404).json({ error: "Invalid user" });
+        }
+
+        let dataToSend = {};
+
+        const userDataToSend = await models.User.findOne({
+            attributes: ['email', 'username', 'isAdmin', 'createdAt'],
+            where: { id: userId }
+        })
+            .then(userFound => {
+                if (userFound != null) {
+                    return userFound.dataValues;
+                } else {
+                    res.json(404).json({ error: 'Utilisateur introuvable.' })
+                }
+
+            })
+            .catch(err => res.status(500).json({ err }));
+
+        const lastArticleToSend = await models.Article.findOne({
+            attributes: ['title', 'createdAt'],
+            where: { userId: userId },
+            order: [['createdAt', 'DESC']]
+        })
+            .catch(err => res.status(500).json({ err }));
+
+
+
+        const lastCommentToSend = await models.Comment.findOne({
+            attributes: ['content', 'createdAt'],
+            where: { userId: userId },
+            order: [['createdAt', 'DESC']]
+        })
+            .catch(err => res.status(500).json({ err }));
+
+        const numberOfArticles = await models.Article.count({
+            where: { userId: userId }
+        })
+            .catch(err => res.status(500).json({ err }));
+
+        const numberOfComments = await models.Comment.count({
+            where: { userId: userId }
+        })
+            .catch(err => res.status(500).json({ err }));
+
+
+        //Adding user's data to dataToSend
+        dataToSend.user = userDataToSend;
+
+        //Adding last article to dataToSend
+        if (lastArticleToSend != null) {
+            dataToSend.lastArticle = lastArticleToSend;
+        }
+
+        //Adding last comment to dataToSend
+        if (lastCommentToSend != null) {
+            dataToSend.lastComment = lastCommentToSend;
+        }
+
+        //Adding number of articles to dataToSend
+        dataToSend.numberOfArticles = numberOfArticles;
+
+        //Adding number of comments to dataToSend
+        dataToSend.numberOfComments = numberOfComments;
+
+
+
+        res.status(200).json({ dataToSend });
     }
 }

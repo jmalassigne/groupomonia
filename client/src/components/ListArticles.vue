@@ -81,7 +81,7 @@ export default {
       } else {
         alert("Une erreur est survenue, veuillez réessayer.");
       }
-    },
+    }
   },
 
   created() {
