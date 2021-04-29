@@ -33,7 +33,7 @@
     </article>
     <div v-if="areThereCommentsInArticle">
         <div class="header-comments"><p>Commentaires: </p><div class="comments-bar"></div></div>
-        <Comment-display v-for="comment in article.comments.slice().reverse()" :key="comment.date" :content="comment.content" :date="comment.createdAt" :author="comment.author"></Comment-display>
+        <Comment-display v-for="comment in article.comments.slice().reverse()" :key="comment.date" :id="comment.id" :content="comment.content" :date="comment.createdAt" :author="comment.author" :userCanDelete="comment.userCanDelete"></Comment-display>
     </div>
     
 </main>

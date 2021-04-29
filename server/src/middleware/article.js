@@ -343,7 +343,7 @@ module.exports = {
 
 
         const commentsToSend = await models.Comment.findAll({
-            attributes: ['content', 'createdAt', 'userId'],
+            attributes: ['content', 'createdAt', 'userId', 'id'],
             where: { articleId: articleId }
         })
             .then(commentsFound => {

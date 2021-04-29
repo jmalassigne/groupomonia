@@ -85,6 +85,8 @@ export default {
     async deleteArticle() {
       if (confirm("Êtes vous sûr de vouloir supprimer l'article?")) {
         this.destroyComponent = false;
+      } else {
+        return;
       }
 
       const articleId = this.id;
@@ -119,8 +121,8 @@ export default {
       } else {
         alert("Une erreur est survenue, veuillez réessayer.");
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
