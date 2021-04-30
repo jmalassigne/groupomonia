@@ -93,11 +93,44 @@ module.exports = {
                     .catch(err => res.status(500).json({ err }))
 
             })
-            .catch(err => res.status(500).json({ err }))
+            .catch(err => res.status(500).json({ err }));
 
     },
     deleteAccount: (req, res) => {
+        const headerAuth = req.headers['authorization'];
+        const userId = jwtUtils.getUserId(headerAuth);
+        const isUserAnAdmin = jwtUtils.getUserAdmin(headerAuth);
 
+        if (userId < 0) {
+            return res.status(404).json({ error: "Invalid user" });
+        }
+
+        if(isUserAnAdmin) {
+            return res.status(400).json({error: "Admins can not delete their account."})
+        }
+
+        models.Like.destroy({
+            where: {userId: userId}
+        })
+        .catch(err => res.status(500).json({ err }));
+
+        models.Comment.destroy({
+            where: {userId: userId}
+        })
+        .catch(err => res.status(500).json({ err }));
+
+        models.Article.destroy({
+            where: {userId: userId}
+        })
+        .catch(err => res.status(500).json({ err }));
+
+        models.User.destroy({
+            where: {id: userId}
+        })
+        .then(() => {
+            return res.status(204).json({message: 'User deleted successfully'})
+        })
+        .catch(err => res.status(500).json({ err }));
     },
     getUser: async (req, res) => {
         const headerAuth = req.headers['authorization'];

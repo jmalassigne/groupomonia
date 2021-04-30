@@ -15,7 +15,9 @@
           </p>
           <p>
             Date d'inscription:
-            <span class="data">Le {{ dateConverted(userData.user.createdAt) }}</span>
+            <span class="data"
+              >Le {{ dateConverted(userData.user.createdAt) }}</span
+            >
           </p>
           <p>
             Compte administrateur:
@@ -27,21 +29,41 @@
           <div class="underline"></div>
           <p>
             Nombre d articles:
-            <span class="data">Vous avez publié {{ userData.numberOfArticles }} articles.</span>
+            <span class="data"
+              >Vous avez publié {{ userData.numberOfArticles }} articles.</span
+            >
           </p>
           <p>
             Nombre de commentaires:
-            <span class="data">Vous avez publié {{ userData.numberOfComments }} commentaires.</span>
+            <span class="data"
+              >Vous avez publié
+              {{ userData.numberOfComments }} commentaires.</span
+            >
           </p>
           <p>
             Dernier article:
-            <span class="data">Publié le {{ dateConverted(userData.lastArticle.createdAt) }}.</span>
+            <span v-if="isThereArticleToDisplay" class="data"
+              >Publié le
+              {{ dateConverted(userData.lastArticle.createdAt) }}.</span
+            >
+            <span v-else class="data"
+              >Vous n'avez pas encore publié d'article.</span
+            >
           </p>
           <p>
-            Dernier commentaire: <span class="data">Publié le {{ dateConverted(userData.lastComment.createdAt) }}.</span>
+            Dernier commentaire:
+            <span v-if="isThereCommentToDisplay" class="data"
+              >Publié le
+              {{ dateConverted(userData.lastComment.createdAt) }}.</span
+            >
+            <span v-else class="data"
+              >Vous n'avez pas encore publié de commentaire.</span
+            >
           </p>
         </div>
-        <button class="deleteButton" v-if="!userData.user.isAdmin">Supprimer mon compte</button>
+        <button class="deleteButton" v-if="!userData.user.isAdmin">
+          Supprimer mon compte
+        </button>
       </article>
     </main>
   </div>
@@ -49,6 +71,7 @@
 
 <script>
 import Header from "../components/Header";
+import Router from "../router/index";
 
 export default {
   name: "Settings",
@@ -56,6 +79,7 @@ export default {
   data() {
     return {
       urlGetUser: "http://localhost:3000/groupomonia/users/get-user",
+      urlDeleteUser: "http://localhost:3000/groupomonia/users/get-user",
       userData: {
         user: {},
         lastComment: null,
@@ -122,15 +146,52 @@ export default {
 
       this.dataReceived = true;
     },
+    async deleteUser() {
+
+      if(!confirm('Etes vous sûr de vouloir supprimer votre compte?')) {
+        return;
+      }
+
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(this.urlDeleteUser, {
+        headers: {
+          Authorization: "Bearer " + token,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        method: "DELETE",
+      })
+        .then(function (res) {
+          if (res.status == 500) {
+            return 500;
+          } else {
+            return res.json();
+          }
+        })
+        .catch(function () {
+          return false;
+        });
+
+      if (response != false) {
+        if (response === 500) {
+          alert("Une erreur est survenue, veuillez réessayer.");
+        } else {
+          localStorage.removeItem('token');
+          Router.push("/");
+        }
+      } else {
+        alert("Une erreur est survenue, veuillez réessayer.");
+      }
+    },
   },
   computed: {
     adminValue() {
-      return this.userData.user.isAdmin ? 'Oui' : 'Non'
+      return this.userData.user.isAdmin ? "Oui" : "Non";
     },
     dateConverted() {
-       return target => {
-
-         const monthList = {
+      return (target) => {
+        const monthList = {
           1: "janvier",
           2: "février",
           3: "mars",
@@ -142,23 +203,23 @@ export default {
           9: "septembre",
           10: "octobre",
           11: "novembre",
-          12: "decembre"
-      }
+          12: "decembre",
+        };
 
-      let date = new Date(target);
-      
-      const year = date.getFullYear();
-      let month = date.getMonth();
+        let date = new Date(target);
 
-      month = monthList[month];
+        const year = date.getFullYear();
+        let month = date.getMonth();
 
-      const day = date.getDate();
+        month = monthList[month];
 
-      date = `${day} ${month} ${year}`
-      
-      return date;
-       }
-    }
+        const day = date.getDate();
+
+        date = `${day} ${month} ${year}`;
+
+        return date;
+      };
+    },
   },
   created() {
     this.getUserData();
@@ -168,7 +229,8 @@ export default {
 
 <style scoped>
 .container {
-  padding: 150px 250px 0;
+  padding: 130px 250px 0;
+  height: calc(100vh - 130px);
 }
 
 .article {
@@ -207,5 +269,27 @@ p {
   color: #5e5858;
 }
 
+.deleteButton {
+  display: block;
+  margin: auto;
+  padding: 10px 15px;
+  color: #5e5858;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 13px;
+  background: linear-gradient(145deg, #f0f0f0, #fafafa);
+  box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
+  background: #ff7272;
+  border: none;
+  font-size: 17px;
+  transition: 0.3s;
+}
 
+.deleteButton:hover {
+  border-radius: 13px;
+  box-shadow: 7px 7px 15px #a8a8a8, -7px -7px 15px #ffffff;
+  background: #ff7272;
+  cursor: pointer;
+  color: black;
+}
 </style>

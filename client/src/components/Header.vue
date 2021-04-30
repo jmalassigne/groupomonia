@@ -1,30 +1,32 @@
 <template>
   <nav>
-    <img src="../assets/icon-left-font-monochrome-black.png" class="logo" alt="logo">
+    <img
+      src="../assets/icon-left-font-monochrome-black.png"
+      class="logo"
+      alt="logo"
+    />
     <div class="nav-box">
-      <router-link to="/thread" class="btn">Fil d'articles</router-link>  
+      <router-link to="/thread" class="btn">Fil d'articles</router-link>
       <router-link to="/settings" class="btn">Paramètres</router-link>
-      <button class="btn btn-dcnt" @click.prevent="closeSession">Deconnexion</button>
+      <button class="btn btn-dcnt" @click.prevent="closeSession">
+        Deconnexion
+      </button>
     </div>
   </nav>
 </template>
 
 <script>
-import Router from '../router/index'
+import Router from "../router/index";
 
 export default {
-    name:'Header',
-    methods: {
-
-      closeSession() {
-
-        localStorage.removeItem('token');
-        Router.push('/');
-
-      }
-
-    }
-}
+  name: "Header",
+  methods: {
+    closeSession() {
+      localStorage.removeItem("token");
+      Router.push("/");
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -36,9 +38,9 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: linear-gradient(145deg, #f0f0f0, #FAFAFA);
-  box-shadow:  6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
-  }
+  background: linear-gradient(145deg, #f0f0f0, #fafafa);
+  box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
+}
 
 .logo {
   width: 300px;
@@ -58,34 +60,31 @@ nav {
   font-weight: 700;
   text-decoration: none;
   border-radius: 13px;
-  background: linear-gradient(145deg, #f0f0f0, #FAFAFA);
-  box-shadow:  6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
+  background: linear-gradient(145deg, #f0f0f0, #fafafa);
+  box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
   transition: 0.3s;
 }
 
 .btn-dcnt {
-    background: #FF7272;
-    border: none;
-    font-size: 17px;
-    font-weight: 800;
+  background: #ff7272;
+  border: none;
+  font-size: 17px;
+  font-weight: 800;
 }
 
 .btn:hover {
   border-radius: 13px;
   background: linear-gradient(145deg, #f0f0f0, #cacaca);
-  box-shadow:  7px 7px 15px #a8a8a8,
-             -7px -7px 15px #ffffff;    
+  box-shadow: 7px 7px 15px #a8a8a8, -7px -7px 15px #ffffff;
+  color: black;
 }
 
 .btn-dcnt:hover {
-    background: #EE6161;
-    cursor: pointer;
+  background: #ee6161;
+  cursor: pointer;
 }
 
-
-.router-link-active{
-  box-shadow:  6px 6px 13px #bcbcbc inset, -6px -6px 13px #ffffff inset;
+.router-link-active {
+  box-shadow: 6px 6px 13px #bcbcbc inset, -6px -6px 13px #ffffff inset;
 }
-
-
 </style>
