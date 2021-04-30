@@ -95,6 +95,7 @@ export default {
         if (response === 500) {
           alert("Une erreur est survenue, veuillez réessayer.");
         } else {
+          this.$emit('getArticle')
           console.log(response);
         }
       } else {

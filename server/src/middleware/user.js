@@ -124,7 +124,7 @@ module.exports = {
             .catch(err => res.status(500).json({ err }));
 
         const lastArticleToSend = await models.Article.findOne({
-            attributes: ['title', 'createdAt'],
+            attributes: ['createdAt'],
             where: { userId: userId },
             order: [['createdAt', 'DESC']]
         })
@@ -133,7 +133,7 @@ module.exports = {
 
 
         const lastCommentToSend = await models.Comment.findOne({
-            attributes: ['content', 'createdAt'],
+            attributes: ['createdAt'],
             where: { userId: userId },
             order: [['createdAt', 'DESC']]
         })
