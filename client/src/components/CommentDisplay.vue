@@ -1,5 +1,5 @@
 <template>
-<div v-if="destroyComponent" class="comment-container">
+<div class="comment-container">
     <div class="prez">
         <p class="author">De {{author}}</p>
         <p class="date">{{dateConverted}}</p>
@@ -23,9 +23,7 @@ export default {
   data(){
 
       return {
-          isUserCanDelete: this.userCanDelete,
-          url: 'http://localhost:3000/groupomonia/comments/delete-comment?id=',
-          destroyComponent: true
+          isUserCanDelete: this.userCanDelete
       }
 
   },
@@ -60,48 +58,14 @@ export default {
     },
   },
   methods: {
-      async deleteComment(){
+      deleteComment(){
 
-          if(confirm('Voulez vous vraiment supprimer le commentaire?')){
-              this.destroyComponent = false;
-          } else {
-              return;
+          if(!confirm('Voulez vous vraiment supprimer le commentaire?')){
+            return;   
           }
 
-          const commentId = this.id;
-
-          const token = localStorage.getItem("token");
-
-      const response = await fetch(this.url + commentId, {
-        headers: {
-          Authorization: "Bearer " + token,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        method: "DELETE",
-      })
-        .then(function (res) {
-          if (res.status == 500) {
-            return 500;
-          } else {
-            return res.json();
-          }
-        })
-        .catch(function () {
-          return false;
-        });
-
-      if (response != false) {
-        if (response === 500) {
-          alert("Une erreur est survenue, veuillez réessayer.");
-        } else {
-          this.$emit('getArticle')
-          console.log(response);
-        }
-      } else {
-        alert("Une erreur est survenue, veuillez réessayer.");
-      }
-    }
+          this.$emit('deleteComment', this.id)
+     }
   }
 };
 </script>
