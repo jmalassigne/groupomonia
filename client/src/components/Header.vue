@@ -6,7 +6,8 @@
       alt="logo"
     />
     <div class="nav-box">
-      <router-link to="/thread" class="btn">Fil d'articles</router-link>
+      <router-link to="/thread" class="btn">Articles</router-link>
+      <router-link to="/gifs" class="btn">Gifs</router-link>
       <router-link to="/settings" class="btn">Paramètres</router-link>
       <button class="btn btn-dcnt" @click.prevent="closeSession">
         Deconnexion

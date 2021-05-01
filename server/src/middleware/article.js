@@ -47,7 +47,6 @@ module.exports = {
         const isUserAnAdmin = jwtUtils.getUserAdmin(headerAuth);
         const filter = req.query.filter;
 
-
         if (userId < 0) {
             return res.status(400).json({ error: "Invalid user" });
         }

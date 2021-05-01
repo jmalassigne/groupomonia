@@ -229,6 +229,7 @@ export default {
 .container {
   padding: 130px 250px 0;
   height: calc(100vh - 130px);
+  background: linear-gradient(145deg, #f0f0f0, #FAFAFA);
 }
 
 .article {
