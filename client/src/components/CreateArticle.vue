@@ -35,8 +35,7 @@ export default {
       url: "http://localhost:3000/groupomonia/articles/create",
       form: {
         title: "",
-        content: "",
-        file: null,
+        content: ""
       },
     };
   },
@@ -165,6 +164,9 @@ export default {
           warning.style.margin = "10px auto 0 auto";
 
           form.appendChild(warning);
+
+          this.form.title = '';
+          this.form.content = '';
 
           setTimeout(() => {
             form.removeChild(warning);

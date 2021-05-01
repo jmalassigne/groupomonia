@@ -23,7 +23,7 @@ export default {
   methods: {
     closeSession() {
       localStorage.removeItem("token");
-      Router.push("/");
+      Router.push("/signin");
     },
   },
 };

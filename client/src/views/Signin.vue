@@ -58,18 +58,26 @@ export default {
                               body: JSON.stringify(form)
                            })
                             .then(function(res){ 
-                              if(res.status == 500) {
+                              
+                              if(res.status === 500) {
                                 return 500;
+                              } else if(res.status === 400){
+                                return 400;
+                              } else if(res.status === 404){
+                                return 404;
                               } else {
                                 return res.json();
                               }
+                              
                             })
                             .catch(function(){ return false })
 
 
-      if(response != false){
-        if(response === 500) {
-          this.wrongUser();
+      if(response != 500){
+        if(response === 400) {
+          this.wrongUser(400);
+        } else if(response === 404){
+          this.wrongUser(404);
         } else {
           localStorage.setItem('token', response.token);
           Router.push({path: '/thread'});
@@ -82,12 +90,19 @@ export default {
 
     },
 
-    wrongUser(){
+    wrongUser(status){
 
       const form = document.querySelector('form');
 
       const warning = document.createElement('p');
-      warning.textContent = 'L\'utilisateur n\'éxiste pas, veuillez réessayer.';
+
+      if(status === 400){
+        warning.textContent = 'Le mot de passe est invalide.';
+      }
+      
+      if(status === 404) {
+        warning.textContent = 'L\'utilisateur n\'éxiste pas, veuillez réessayer.';
+      }
 
       warning.style.color = "#FF7272";
       warning.style.margin = "10px auto 0 auto";

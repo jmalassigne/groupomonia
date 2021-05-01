@@ -61,7 +61,7 @@
             >
           </p>
         </div>
-        <button class="deleteButton" v-if="!userData.user.isAdmin">
+        <button @click="deleteUser" class="deleteButton" v-if="!userData.user.isAdmin">
           Supprimer mon compte
         </button>
       </article>
@@ -79,7 +79,7 @@ export default {
   data() {
     return {
       urlGetUser: "http://localhost:3000/groupomonia/users/get-user",
-      urlDeleteUser: "http://localhost:3000/groupomonia/users/get-user",
+      urlDeleteUser: "http://localhost:3000/groupomonia/users/delete-account",
       userData: {
         user: {},
         lastComment: null,
@@ -173,17 +173,11 @@ export default {
           return false;
         });
 
-      if (response != false) {
-        if (response === 500) {
-          alert("Une erreur est survenue, veuillez réessayer.");
-        } else {
+          console.log(response)
           localStorage.removeItem('token');
           Router.push("/");
-        }
-      } else {
-        alert("Une erreur est survenue, veuillez réessayer.");
-      }
-    },
+       
+    }
   },
   computed: {
     adminValue() {

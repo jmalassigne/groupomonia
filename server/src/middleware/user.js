@@ -75,7 +75,7 @@ module.exports = {
             .then(userFound => {
 
                 if (!userFound) {
-                    return res.status(500).json({ error: "User does not exist" })
+                    return res.status(404).json({ error: "User does not exist" })
                 }
 
                 bcrypt.compare(userInfos.password, userFound.password)
