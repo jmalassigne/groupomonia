@@ -28,7 +28,7 @@
           <h2 class="title">Activités du compte:</h2>
           <div class="underline"></div>
           <p>
-            Nombre d articles:
+            Nombre d'articles:
             <span class="data"
               >Vous avez publié {{ userData.numberOfArticles }} articles.</span
             >

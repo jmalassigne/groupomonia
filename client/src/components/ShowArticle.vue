@@ -33,7 +33,7 @@
     </article>
     <div v-if="areThereCommentsInArticle">
         <div class="header-comments"><p>Commentaires: </p><div class="comments-bar"></div></div>
-        <Comment-display @getArticle="getArticle" v-for="comment in article.comments.slice().reverse()" :key="comment.date" :id="comment.id" :content="comment.content" :date="comment.createdAt" :author="comment.author" :userCanDelete="comment.userCanDelete"></Comment-display>
+        <Comment-display  @getArticle="getArticle" v-for="comment in article.comments.slice().reverse()" :key="comment.date" :id="comment.id" :content="comment.content" :date="comment.createdAt" :author="comment.author" :userCanDelete="comment.userCanDelete"></Comment-display>
     </div>
     
 </main>
@@ -115,8 +115,7 @@ export default {
                     console.error(response);
 
                 } else {
-                
-                    console.log(response);
+                    this.areThereCommentsInArticle = false;
                     this.showArticle = false;
                     this.article = {};
                     this.commentContent = '';
@@ -161,7 +160,6 @@ export default {
                 alert('Une erreur est survenue, veuillez réessayer.')
                 } else {
 
-                this.areThereCommentsInArticle = false;
                 this.article = response;
                 this.showArticle = true;
                 this.userLikeValue = null;
