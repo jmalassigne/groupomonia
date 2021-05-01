@@ -165,7 +165,8 @@ export default {
         .then(function (res) {
           if (res.status == 500) {
             return 500;
-          } else {
+          } 
+          if(res.status === 204) {
             return res.json();
           }
         })
@@ -173,9 +174,12 @@ export default {
           return false;
         });
 
-          console.log(response)
+        if(response === 500){
+          alert("Une erreur est survenue, veuillez réessayer.")
+        } else {
           localStorage.removeItem('token');
           Router.push("/");
+        }
        
     }
   },

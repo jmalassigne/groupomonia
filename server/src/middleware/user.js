@@ -112,17 +112,17 @@ module.exports = {
         models.Like.destroy({
             where: {userId: userId}
         })
-        .catch(err => res.status(500).json({ err }));
+        .catch(err => { return res.status(500).json({ err }) });
 
         models.Comment.destroy({
             where: {userId: userId}
         })
-        .catch(err => res.status(500).json({ err }));
+        .catch(err => { return res.status(500).json({ err }) });
 
         models.Article.destroy({
             where: {userId: userId}
         })
-        .catch(err => res.status(500).json({ err }));
+        .catch(err => { return res.status(500).json({ err }) });
 
         models.User.destroy({
             where: {id: userId}
