@@ -1,19 +1,19 @@
 <template>
-  <nav>
+  <header>
     <img
       src="../assets/icon-left-font-monochrome-black.png"
       class="logo"
       alt="logo"
     />
-    <div class="nav-box">
+    <nav>
       <router-link to="/thread" class="btn">Articles</router-link>
       <router-link to="/gifs" class="btn">Gifs</router-link>
       <router-link to="/settings" class="btn">Paramètres</router-link>
       <button class="btn btn-dcnt" @click.prevent="closeSession">
         Deconnexion
       </button>
-    </div>
-  </nav>
+    </nav>
+  </header>
 </template>
 
 <script>
@@ -31,7 +31,7 @@ export default {
 </script>
 
 <style scoped>
-nav {
+header {
   position: fixed;
   z-index: 1000;
   height: 80px;
@@ -48,7 +48,7 @@ nav {
   margin-left: 50px;
 }
 
-.nav-box {
+nav {
   margin-right: 100px;
   width: 40%;
   display: flex;

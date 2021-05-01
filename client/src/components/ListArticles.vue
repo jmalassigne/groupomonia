@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <article class="container">
     <div class="list-container" v-if="articlesLoaded">
       <Article-pattern
         v-for="article in articles.articles"
@@ -10,7 +10,7 @@
     </div>
 
     <ShowArticle v-if="displayArticle" :id="idToDisplay"></ShowArticle>
-  </div>
+  </article>
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-  <article
+  <section
     v-if="destroyComponent"
     class="container"
     :data-id="id"
@@ -17,7 +17,7 @@
       </button>
     </div>
     <div class="content">
-      <p class="title">{{ articleData.title }}</p>
+      <h2 class="title">{{ articleData.title }}</h2>
       <p>{{ articleData.content }}</p>
     </div>
     <div class="mentions">
@@ -36,7 +36,7 @@
         </p>
       </div>
     </div>
-  </article>
+  </section>
 </template>
 
 <script>

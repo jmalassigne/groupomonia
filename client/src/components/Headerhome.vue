@@ -1,15 +1,15 @@
 <template>
-  <nav>
+  <header>
     <img
       src="../assets/icon-left-font-monochrome-black.png"
       class="logo"
       alt="logo"
     />
-    <div class="nav-box">
+    <nav>
       <router-link to="/" class="btn">Inscription</router-link>
       <router-link to="/signin" class="btn">Connexion</router-link>
-    </div>
-  </nav>
+    </nav>
+  </header>
 </template>
 
 <script>
@@ -20,7 +20,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-nav {
+header {
   position: fixed;
   height: 80px;
   width: 100%;
@@ -36,7 +36,7 @@ nav {
   margin-left: 50px;
 }
 
-.nav-box {
+nav {
   margin-right: 100px;
   width: 25%;
   display: flex;

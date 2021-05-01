@@ -1,5 +1,5 @@
 <template>
-<div class="comment-container">
+<section class="comment-container">
     <div class="prez">
         <p class="author">De {{author}}</p>
         <p class="date">{{dateConverted}}</p>
@@ -13,7 +13,7 @@
     <div class="content">
         <p>{{content}}</p>
     </div>
-</div>
+</section>
 </template>
 
 <script>

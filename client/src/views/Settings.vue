@@ -3,7 +3,7 @@
     <Header></Header>
     <main v-if="dataReceived" class="container">
       <article class="article">
-        <div class="bloc">
+        <section class="bloc">
           <h2 class="title">Informations du compte:</h2>
           <div class="underline"></div>
           <p>
@@ -23,8 +23,8 @@
             Compte administrateur:
             <span class="data">{{ adminValue }}</span>
           </p>
-        </div>
-        <div class="bloc">
+        </section>
+        <section class="bloc">
           <h2 class="title">Activités du compte:</h2>
           <div class="underline"></div>
           <p>
@@ -60,7 +60,7 @@
               >Vous n'avez pas encore publié de commentaire.</span
             >
           </p>
-        </div>
+        </section>
         <button @click="deleteUser" class="deleteButton" v-if="!userData.user.isAdmin">
           Supprimer mon compte
         </button>
