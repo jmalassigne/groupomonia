@@ -9,7 +9,7 @@
       <router-link to="/thread" class="btn">Articles</router-link>
       <router-link to="/gifs" class="btn">Gifs</router-link>
       <router-link to="/settings" class="btn">Paramètres</router-link>
-      <button class="btn btn-dcnt" @click.prevent="closeSession">
+      <button class="btn exit-btn" @click.prevent="closeSession">
         Deconnexion
       </button>
     </nav>
@@ -30,62 +30,98 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "../styles/_variables.scss";
+
 header {
   position: fixed;
-  z-index: 1000;
+  z-index: 1;
   height: 80px;
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(145deg, #f0f0f0, #fafafa);
-  box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
-}
+  background: $primaryGradient;
+  box-shadow: $primaryShadow;
 
-.logo {
-  width: 300px;
-  margin-left: 50px;
-}
+  @media (max-width: 1000px) {
+    height: 60px;
+  }
 
-nav {
-  margin-right: 100px;
-  width: 40%;
-  display: flex;
-  justify-content: space-around;
-}
+  .logo {
+    position: absolute;
+    left: 30px;
+    width: 300px;
+    top: 14px;
 
-.btn {
-  padding: 10px 15px;
-  color: #5e5858;
-  font-weight: 700;
-  text-decoration: none;
-  border-radius: 13px;
-  background: linear-gradient(145deg, #f0f0f0, #fafafa);
-  box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
-  transition: 0.3s;
-}
+    @media (max-width: 1000px) {
+      width: 200px;
+    }
 
-.btn-dcnt {
-  background: #ff7272;
-  border: none;
-  font-size: 17px;
-  font-weight: 800;
-}
+    @media (max-width: 570px) {
+      width: 150px;
+      top: 20px;
+    }
 
-.btn:hover {
-  border-radius: 13px;
-  background: linear-gradient(145deg, #f0f0f0, #cacaca);
-  box-shadow: 7px 7px 15px #a8a8a8, -7px -7px 15px #ffffff;
-  color: black;
-}
+    @media (max-width: 490px) {
+      width: 130px;
+      top: 20px;
+      left: 10px;
+    }
+  }
+  nav {
+    position: absolute;
+    right: 30px;
+    height: 100%;
+    width: 500px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 
-.btn-dcnt:hover {
-  background: #ee6161;
-  cursor: pointer;
-}
+    @media (max-width: 1000px) {
+      width: 350px;
+    }
 
-.router-link-active {
-  box-shadow: 6px 6px 13px #bcbcbc inset, -6px -6px 13px #ffffff inset;
+    @media (max-width: 700px) {
+      width: 250px;
+    }
+
+    .btn {
+      padding: 10px 15px;
+      color: $grey;
+      font-size: 1em;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 13px;
+      background: $primaryGradient;
+      box-shadow: $primaryShadow;
+      transition: 0.3s;
+
+      @media (max-width: 1000px) {
+        font-size: 0.6em;
+      }
+
+      @media (max-width: 700px) {
+        font-size: 0.5em;
+        padding: 7px 10px;
+      }
+
+      &:hover {
+        background: $btnHoverGradient;
+        color: black;
+      }
+
+      
+    }
+    .exit-btn {
+        background: $red;
+        border: none;
+
+        &:hover {
+          background: #ee6161;
+          cursor: pointer;
+        }
+      }
+    .router-link-active {
+      box-shadow: $btnActiveShadow;
+    }
+  }
 }
 </style>

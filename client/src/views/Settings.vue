@@ -61,7 +61,11 @@
             >
           </p>
         </section>
-        <button @click="deleteUser" class="deleteButton" v-if="!userData.user.isAdmin">
+        <button
+          @click="deleteUser"
+          class="deleteButton"
+          v-if="!userData.user.isAdmin"
+        >
           Supprimer mon compte
         </button>
       </article>
@@ -147,8 +151,7 @@ export default {
       this.dataReceived = true;
     },
     async deleteUser() {
-
-      if(!confirm('Etes vous sûr de vouloir supprimer votre compte?')) {
+      if (!confirm("Etes vous sûr de vouloir supprimer votre compte?")) {
         return;
       }
 
@@ -165,8 +168,8 @@ export default {
         .then(function (res) {
           if (res.status == 500) {
             return 500;
-          } 
-          if(res.status === 204) {
+          }
+          if (res.status === 204) {
             return res.json();
           }
         })
@@ -174,14 +177,13 @@ export default {
           return false;
         });
 
-        if(response === 500){
-          alert("Une erreur est survenue, veuillez réessayer.")
-        } else {
-          localStorage.removeItem('token');
-          Router.push("/");
-        }
-       
-    }
+      if (response === 500) {
+        alert("Une erreur est survenue, veuillez réessayer.");
+      } else {
+        localStorage.removeItem("token");
+        Router.push("/");
+      }
+    },
   },
   computed: {
     adminValue() {
@@ -225,11 +227,19 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .container {
   padding: 130px 250px 0;
   height: calc(100vh - 130px);
-  background: linear-gradient(145deg, #f0f0f0, #FAFAFA);
+  background: linear-gradient(145deg, #f0f0f0, #fafafa);
+
+  @media (max-width: 1210px) {
+    padding: 80px 100px 0;
+  }
+
+  @media (max-width: 890px) {
+    padding: 80px 10px 0;
+  }
 }
 
 .article {
@@ -245,6 +255,10 @@ export default {
 .title {
   font-size: 20px;
   color: black;
+
+  @media (max-width: 700px) {
+    font-size: 16px;
+  }
 }
 
 .underline {
@@ -261,11 +275,20 @@ p {
   font-size: 18px;
   margin-bottom: 20px;
   color: black;
+
+  @media (max-width: 700px) {
+    font-size: 15px;
+  }
 }
 
 .data {
   font-size: 16px;
   color: #5e5858;
+  text-align: right;
+
+  @media (max-width: 700px) {
+    font-size: 14px;
+  }
 }
 
 .deleteButton {

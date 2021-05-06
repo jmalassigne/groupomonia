@@ -19,49 +19,81 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style scoped lang="scss">
+@import "../styles/_variables.scss";
+
 header {
   position: fixed;
   height: 80px;
   width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: linear-gradient(145deg, #f0f0f0, #fafafa);
-  box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
+  background: $primaryGradient;
+  box-shadow: $primaryShadow;
+
+  @media (max-width: 900px) {
+      height: 60px;
+    }
+
+  .logo {
+    position: absolute;
+    left: 30px;
+    width: 300px;
+    top: 14px;
+
+    @media (max-width: 900px) {
+      width: 200px;
+    }
+
+    @media (max-width: 570px) {
+      width: 150px;
+      top: 20px;
+    }
+  }
+
+  nav {
+    position: absolute;
+    right: 30px;
+    height: 100%;
+    width: 300px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    @media (max-width: 900px) {
+      width: 250px;
+    }
+
+    @media (max-width: 570px) {
+      width: 150px;
+    }
+
+    .btn {
+      padding: 10px 15px;
+      color: $grey;
+      font-weight: 700;
+      text-decoration: none;
+      border-radius: 13px;
+      background: $primaryGradient;
+      box-shadow: $primaryShadow;
+      transition: 0.3s;
+
+      @media (max-width: 900px) {
+        font-size: 0.7em;
+    }
+
+    @media (max-width: 570px) {
+        font-size: 0.5em;
+        padding: 7px 10px;
+    }
+
+      &:hover {
+        background: $btnHoverGradient;
+        color: black;
+      }
+    }
+    .router-link-active {
+      box-shadow: $btnActiveShadow;
+    }
+  }
 }
 
-.logo {
-  width: 300px;
-  margin-left: 50px;
-}
-
-nav {
-  margin-right: 100px;
-  width: 25%;
-  display: flex;
-  justify-content: space-around;
-}
-
-.btn {
-  padding: 15px 20px;
-  color: #5e5858;
-  font-weight: 700;
-  text-decoration: none;
-  border-radius: 13px;
-  background: linear-gradient(145deg, #f0f0f0, #fafafa);
-  box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
-  transition: 0.3s;
-}
-
-.btn:hover {
-  border-radius: 13px;
-  background: linear-gradient(145deg, #f0f0f0, #cacaca);
-  box-shadow: 7px 7px 15px #a8a8a8, -7px -7px 15px #ffffff;
-  color: black;
-}
-
-.router-link-active {
-  box-shadow: 6px 6px 13px #bcbcbc inset, -6px -6px 13px #ffffff inset;
-}
 </style>

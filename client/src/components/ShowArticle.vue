@@ -400,144 +400,149 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang='scss' scoped>
 .container {
   padding: 0;
   margin-bottom: 30px;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 10px;
-}
 
-.article-container {
-  padding: 15px 15px;
-  margin: 0;
-}
+  .prez {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 
-.prez {
-  margin-bottom: 20px;
-  display: flex;
-  justify-content: space-between;
-  padding: 15px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-}
+    .username {
+      color: black;
+      font-weight: 600;
+      font-size: 16px;
+    }
 
-.username {
-  color: black;
-  font-weight: 600;
-  font-size: 16px;
-}
+    .date {
+      font-size: 12px;
+    }
+  }
 
-.date {
-  font-size: 12px;
-}
+  .article-container {
+    padding: 15px 15px;
+    margin: 0;
 
-h2 {
-  color: black;
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 20px;
-}
+    h2 {
+      color: black;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+  }
 
-.mentions {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 10px;
-  border-top: 1px solid rgba(0, 0, 0, 0.2);
-}
+  .mentions {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
 
-.buttons {
-  display: flex;
-  justify-content: space-between;
-}
+    button {
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
 
-.likes {
-  display: flex;
-  align-items: center;
-}
+    .buttons {
+      display: flex;
+      justify-content: space-between;
 
-textarea {
-  margin-top: 10px;
-  border: none;
-  border-radius: 10px;
-  height: 50px;
-}
+      .likes {
+        display: flex;
+        align-items: center;
 
-textarea:focus {
-  outline: none;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-}
+        button {
+          background: rgba(0, 0, 0, 0);
+          margin: 0 0 0 15px;
+          border-radius: 5px;
 
-.block-button {
-  display: flex;
-  align-items: center;
-}
+          i {
+            font-size: 20px;
+          }
 
-button {
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-}
+          &:hover {
+            box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
+          }
 
-.likes button {
-  background: rgba(0, 0, 0, 0);
-  margin: 0 0 0 15px;
-  border-radius: 5px;
-}
+          &:active {
+            box-shadow: none;
+          }
 
-.likes button:hover {
-  box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
-}
+          &:focus {
+            outline: none;
+          }
+        }
 
-.likes button:active {
-  box-shadow: none;
-}
+        .like {
+          &:hover {
+            background: #21a87d;
+          }
 
-.likes .like:hover {
-  background: #21a87d;
-}
+          &.active i {
+            color: #21a87d;
+          }
 
-.likes .dislike:hover {
-  background: #ff7272;
-}
+          &.active:hover i {
+            color: black;
+          }
+        }
 
-.likes .dislike.active i {
-  color: #ff7272;
-}
+        .dislike {
+          &:hover {
+            background: #ff7272;
+          }
 
-.likes .dislike.active:hover i {
-  color: black;
-}
+          &.active i {
+            color: #ff7272;
+          }
 
-.likes .like.active i {
-  color: #21a87d;
-}
+          &.active:hover i {
+            color: black;
+          }
+        }
 
-.likes .like.active:hover i {
-  color: black;
-}
+        .block-button {
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
 
-.likes button i {
-  font-size: 20px;
-}
+    textarea {
+      margin-top: 10px;
+      border: none;
+      border-radius: 10px;
+      height: 50px;
 
-button:focus {
-  outline: none;
+      &:focus {
+        outline: none;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+      }
+    }
+  }
 }
 
 .comment {
   border-radius: 5px;
   background: #489cc1;
   padding: 12px 15px;
+
+  &:hover {
+    box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
+  }
+
+  &:active {
+    box-shadow: none;
+  }
 }
 
-.comment:hover {
-  box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
-}
-
-.comment:active {
-  box-shadow: none;
-}
 
 .header-comments {
   display: flex;

@@ -98,10 +98,21 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .container {
   padding: 50px 80px;
   margin-left: 265px;
+
+  @media (max-width: 1000px) {
+    margin-left: 200px;
+    padding: 30px 40px;
+  }
+
+  @media (max-width: 850px) {
+    margin-top: 60px;
+    padding: 20px 30px;
+    margin-left: 0;
+  }
 }
 
 </style>

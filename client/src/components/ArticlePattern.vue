@@ -121,28 +121,29 @@ export default {
       } else {
         alert("Une erreur est survenue, veuillez réessayer.");
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style scoped>
-article.container {
+<style lang="scss" scoped>
+section.container {
   position: relative;
+  width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.2);
   padding: 0;
   border-radius: 10px;
   transition: 0.3s;
-  margin: 0px auto 50px auto;
-}
+  margin: 0px auto 50px;
 
-.container:hover {
-  box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
-  cursor: pointer;
-}
+  &:hover {
+    cursor: pointer;
+    box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
+  }
 
-.container:active {
-  box-shadow: none;
+  &:active {
+    box-shadow: none;
+  }
 }
 
 .prez {
@@ -154,36 +155,31 @@ article.container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
 
-.date {
-  font-size: 12px;
-}
+  .date {
+    font-size: 12px;
+  }
 
-#deleteButton {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  border: none;
-  background: none;
-  cursor: pointer;
-  transition: 0.1s;
-}
+  #deleteButton {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    transition: 0.1s;
 
-#deleteButton i {
-  color: rgba(0, 0, 0, 0.7);
-  font-size: 20px;
-  transition: 0.1s;
-}
+    i {
+      color: rgba(0, 0, 0, 0.6);
+      font-size: 20px;
+      transition: 0.1s;
 
-#deleteButton:hover {
-  top: -11px;
-  right: -11px;
-}
-
-#deleteButton i:hover {
-  color: black;
-  font-size: 22px;
+      &:hover {
+        color: black;
+        transform: scale(1.1) rotate(90deg);
+      }
+    }
+  }
 }
 
 .content {
@@ -191,13 +187,28 @@ article.container {
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   box-shadow: 6px 6px 13px #bcbcbc inset;
   height: 100px;
-}
 
-.title {
-  margin-bottom: 20px;
-  font-weight: 500;
-  font-size: 20px;
-  color: black;
+  p {
+      @media (max-width: 700px) {
+        font-size: .9em;
+      }
+      @media (max-width: 500px) {
+        font-size: .8em;
+      }
+
+    }
+
+  .title {
+    margin-bottom: 20px;
+    font-weight: 500;
+    font-size: 20px;
+    color: black;
+
+    @media (max-width: 700px) {
+      font-size: 17px;
+      margin-bottom: 15px;
+    }
+  }
 }
 
 .mentions {
@@ -205,26 +216,23 @@ article.container {
   justify-content: space-between;
   align-items: center;
   padding: 5px 15px;
-}
 
-.likes {
-  display: flex;
-  align-items: center;
-}
+  .likes {
+    display: flex;
+    align-items: center;
 
-.margin-right {
-  margin-right: 25px;
-}
-
-.fa-thumbs-up {
-  color: #21a87d;
-}
-
-.fa-thumbs-down {
-  color: #ff7272;
-}
-
-.fa-comments {
-  color: #489cc1;
+    .margin-right {
+      margin-right: 25px;
+    }
+    .fa-thumbs-up {
+      color: #21a87d;
+    }
+    .fa-thumbs-down {
+      color: #ff7272;
+    }
+    .fa-comments {
+      color: #489cc1;
+    }
+  }
 }
 </style>

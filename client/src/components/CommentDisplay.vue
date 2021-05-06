@@ -101,14 +101,9 @@ export default {
   transition: 0.1s;
 }
 
-#deleteButton:hover {
-  top: -11px;
-  right: -11px;
-}
-
 #deleteButton i:hover {
   color: black;
-  font-size: 22px;
+  transform: scale(1.1) rotate(90deg);
 }
 
 .author {

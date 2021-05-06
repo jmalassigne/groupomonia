@@ -1,217 +1,232 @@
 <template>
-<div>
-  <Headerhome></Headerhome>
-  <main>
-    <form>
+  <div>
+    <Headerhome></Headerhome>
+    <main>
+      <form>
+        <div class="input-box">
+          <label for="email">E-mail:</label>
+          <input
+            type="email"
+            id="email"
+            v-model="form.email"
+            @focus="anim($event)"
+            @blur="stopAnim($event)"
+          />
+          <div class="focus-bar"></div>
+        </div>
 
-      <div class="input-box">
-      <label for="email">E-mail</label>
-      <input type="email" id="email" v-model="form.email" @focus="anim($event)" @blur="stopAnim($event)">
-      <div class="focus-bar"></div>
-      </div>
+        <div class="input-box">
+          <label for="password">Mot de passe:</label>
+          <input
+            type="password"
+            id="password"
+            v-model="form.password"
+            @focus="anim($event)"
+            @blur="stopAnim($event)"
+          />
+          <div class="focus-bar"></div>
+        </div>
 
-      <div class="input-box">
-      <label for="password">Mot de passe</label>
-      <input type="password" id="password" v-model="form.password" @focus="anim($event)" @blur="stopAnim($event)">
-      <div class="focus-bar"></div>
-      </div>
-
-      <button @click.prevent="sendForm">Valider</button>
-
-    </form>
-  </main>
-</div>
+        <button @click.prevent="sendForm">Valider</button>
+      </form>
+    </main>
+  </div>
 </template>
 
 <script>
-import Headerhome from '../components/Headerhome';
-import Router from '../router/index';
+import Headerhome from "../components/Headerhome";
+import Router from "../router/index";
 
 export default {
-  name: 'Signin',
+  name: "Signin",
   components: {
-    Headerhome
+    Headerhome,
   },
   data: () => {
     return {
-      url: 'http://localhost:3000/groupomonia/users/login',
+      url: "http://localhost:3000/groupomonia/users/login",
       form: {
-        email: '',
-        password: ''
-      }
-    }
+        email: "",
+        password: "",
+      },
+    };
   },
 
   methods: {
     async sendForm() {
+      const form = {
+        email: this.form.email,
+        password: this.form.password,
+      };
 
-    const form = {
-                  email: this.form.email,
-                  password: this.form.password
-                }
+      const response = await fetch(this.url, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        body: JSON.stringify(form),
+      })
+        .then(function (res) {
+          if (res.status === 500) {
+            return 500;
+          } else if (res.status === 400) {
+            return 400;
+          } else if (res.status === 404) {
+            return 404;
+          } else {
+            return res.json();
+          }
+        })
+        .catch(function () {
+          return false;
+        });
 
-      const response = await fetch(this.url,{headers: {
-                            'Accept': 'application/json',
-                            'Content-Type': 'application/json'
-                          },
-                              method: "POST",
-                              body: JSON.stringify(form)
-                           })
-                            .then(function(res){ 
-                              
-                              if(res.status === 500) {
-                                return 500;
-                              } else if(res.status === 400){
-                                return 400;
-                              } else if(res.status === 404){
-                                return 404;
-                              } else {
-                                return res.json();
-                              }
-                              
-                            })
-                            .catch(function(){ return false })
-
-
-      if(response != 500){
-        if(response === 400) {
+      if (response != 500) {
+        if (response === 400) {
           this.wrongUser(400);
-        } else if(response === 404){
+        } else if (response === 404) {
           this.wrongUser(404);
         } else {
-          localStorage.setItem('token', response.token);
-          Router.push({path: '/thread'});
+          localStorage.setItem("token", response.token);
+          Router.push({ path: "/thread" });
         }
       } else {
-        
-        alert('Une erreur est survenue, veuillez réessayer.')
-
+        alert("Une erreur est survenue, veuillez réessayer.");
       }
-
     },
 
-    wrongUser(status){
+    wrongUser(status) {
+      const form = document.querySelector("form");
 
-      const form = document.querySelector('form');
+      const warning = document.createElement("p");
 
-      const warning = document.createElement('p');
-
-      if(status === 400){
-        warning.textContent = 'Le mot de passe est invalide.';
+      if (status === 400) {
+        warning.textContent = "Le mot de passe est invalide.";
       }
-      
-      if(status === 404) {
-        warning.textContent = 'L\'utilisateur n\'éxiste pas, veuillez réessayer.';
+
+      if (status === 404) {
+        warning.textContent = "L'utilisateur n'éxiste pas, veuillez réessayer.";
       }
 
       warning.style.color = "#FF7272";
       warning.style.margin = "10px auto 0 auto";
 
       form.appendChild(warning);
-      
+
       setTimeout(() => {
         form.removeChild(warning);
       }, 2000);
-      
     },
 
-    anim(e){
+    anim(e) {
       const input = e.currentTarget;
       const focusBar = input.nextSibling;
-      
-      focusBar.style.width = '100%';
+
+      focusBar.style.width = "100%";
     },
 
     stopAnim(e) {
       const input = e.currentTarget;
       const focusBar = input.nextSibling;
-      
-      focusBar.style.width = '0';
-    }
 
-  }
-}
+      focusBar.style.width = "0";
+    },
+  },
+};
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+@import "../styles/_variables.scss";
+
 main {
-  background: linear-gradient(145deg, #f0f0f0, #FAFAFA);
+  background: $primaryGradient;
+  height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding-top: 80px;
-  color: #5e5858;
 }
 
 form {
-  height: 100vh;
-  width: 60%;
+  margin-top: 180px;
+  height: 50%;
+  width: 70%;
   display: flex;
   flex-direction: column;
-  margin-top: 50px;
-}
+  justify-content: space-around;
 
-.input-box {
-  height: 100px;
-  display: flex;
-  flex-direction: column;
-}
+   @media (max-width: 750px) {
+     margin-top: 150px;
+   }
 
-form label {
-  margin-bottom: 10px;
-}
+  .input-box {
+    height: 100px;
+    display: flex;
+    flex-direction: column;
 
-form input {
-  border: none;
-  height: 30px;
-  border-radius: 15px;
-  margin-bottom: 5px;
-}
+    label {
+      margin-bottom: 10px;
+      font-size: 1.1em;
 
-form input:focus {
-  outline: none;
-}
+      @media (max-width: 750px) {
+        font-size: 0.8em;
+      }
+    }
 
-.focus-bar {
-  display: inline-block;
-  height: 3px;
-  background-color: #5e5858;
-  width: 0;
-  margin: 0 auto;
-  border-radius: 5px;
-  transition: 0.3s cubic-bezier(0.075, 0.82, 0.165, 1);
-}
+    input {
+      border: none;
+      height: 30px;
+      border-radius: 15px;
+      margin-bottom: 5px;
 
-button {
-  border: none;
-  width: 90px;
-  height: 50px;
-  margin: 15px auto 0 auto;
-  border-radius: 13px;
-  color: #5e5858;
-  font-weight: 800;
-  background: #e0e0e0;
-  box-shadow:  7px 7px 15px #a8a8a8,
-             -7px -7px 15px #ffffff;
-  transform: 0.3s;
-}
+      @media (max-width: 750px) {
+        height: 20px;
+      }
 
-button:hover {
-  background: linear-gradient(145deg, #f0f0f0, #cacaca);
-  box-shadow:  7px 7px 15px #a8a8a8,
-             -7px -7px 15px #ffffff;
-}
+      &:focus {
+        outline: none;
+      }
+    }
 
-button:focus {
-  outline: none;
-}
+    .focus-bar {
+      height: 3px;
+      background-color: $grey;
+      width: 0;
+      margin: 0 auto;
+      border-radius: 10px;
+      transition: 0.7s cubic-bezier(0.075, 0.82, 0.165, 1);
+    }
+  }
 
-button:active {
-  border-radius: 13px;
-  background: #e0e0e0;
-  box-shadow: inset 7px 7px 15px #a8a8a8,
-            inset -7px -7px 15px #ffffff;
-  color: black;
-}
+  button {
+    border: none;
+    width: 90px;
+    height: 40px;
+    margin: 15px auto;
+    border-radius: 13px;
+    color: $grey;
+    font-weight: 800;
+    font-size: 1.07em;
+    box-shadow: $primaryShadow;
+    background: $primaryGradient;
+    transition: 0.3s;
 
+     @media (max-width: 750px) {
+        height: 30px;
+        width: 70px;
+        border-radius: 8px;
+        font-size: 0.9em;
+      }
+
+    &:hover {
+      background: $btnHoverGradient;
+      color: black;
+    }
+    &:focus {
+      outline: none;
+    }
+    &:active {
+      box-shadow: $btnActiveShadow;
+    }
+  }
+}
 </style>

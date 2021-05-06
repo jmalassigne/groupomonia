@@ -35,7 +35,7 @@ export default {
       url: "http://localhost:3000/groupomonia/articles/create",
       form: {
         title: "",
-        content: ""
+        content: "",
       },
     };
   },
@@ -114,17 +114,17 @@ export default {
 
       const form = {
         title: this.form.title,
-        content: this.form.content
-      }
+        content: this.form.content,
+      };
 
       const response = await fetch(this.url, {
         headers: {
           Authorization: "Bearer " + token,
           Accept: "application/json",
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
         method: "POST",
-        body: JSON.stringify(form)
+        body: JSON.stringify(form),
       })
         .then(function (res) {
           if (res.status == 500) {
@@ -165,8 +165,8 @@ export default {
 
           form.appendChild(warning);
 
-          this.form.title = '';
-          this.form.content = '';
+          this.form.title = "";
+          this.form.content = "";
 
           setTimeout(() => {
             form.removeChild(warning);
@@ -175,17 +175,24 @@ export default {
       } else {
         alert("Une erreur est survenue, veuillez réessayer.");
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .container {
-  width: 100%;
-  height: 100vh;
-  padding: 60px 0 60px 265px;
-  width: calc(100% - 265px);
+  margin-left: 265px;
+  padding-top: 50px;
+
+  @media (max-width: 1000px) {
+    margin-left: 215px;
+  }
+
+  @media (max-width: 850px) {
+    margin-left: 0;
+    margin-top: 60px;
+  }
 }
 
 form {
@@ -193,61 +200,67 @@ form {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-}
 
-label {
-  margin-bottom: 10px;
-}
+  label {
+    margin-bottom: 10px;
+  }
 
-.little {
-  font-size: 10px;
-  transition: 0.3s;
-}
+  span {
+    font-size: 10px;
+    transition: 0.3s ease-in-out;
+  }
 
-input,
-textarea {
-  border: 1px solid rgba(0, 0, 0, 0);
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
+  input,
+  textarea {
+    border: 1px solid rgba(0, 0, 0, 0);
+    border-radius: 10px;
+    margin-bottom: 20px;
 
-input:focus,
-textarea:focus {
-  outline: none;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-}
+    &:focus {
+      outline: none;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+  }
+  input {
+    height: 20px;
+  }
+  textarea {
+    height: 300px;
 
-input {
-  height: 20px;
-}
+    @media (max-width: 700px) {
+      height: 150px;
+    }
+  }
+  button {
+    width: 100px;
+    margin: 0 auto 15px;
+    border: none;
+    padding: 15px 20px;
+    color: #5e5858;
+    font-weight: 700;
+    border-radius: 13px;
+    background: linear-gradient(145deg, #f0f0f0, #fafafa);
+    box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
+    text-align: center;
+    transition: 0.3s;
 
-textarea {
-  height: 300px;
-}
+    @media (max-width: 700px) {
+      width: 80px;
+      height: 30px;
+      font-size: 0.8em;
+      padding: 0;
+    }
 
-button {
-  width: 100px;
-  margin: 0 auto;
-  border: none;
-  padding: 15px 20px;
-  color: #5e5858;
-  font-weight: 700;
-  border-radius: 13px;
-  background: linear-gradient(145deg, #f0f0f0, #fafafa);
-  box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
-  transition: 0.3s;
+    &:hover {
+      background: #21a87d;
+      box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
+    }
+    &:focus {
+      outline: none;
+      background: #21a87d;
+      box-shadow: none;
+    }
+  }
 }
-
-button:hover {
-  background: #21a87d;
-  box-shadow: 6px 6px 13px #bcbcbc, -6px -6px 13px #ffffff;
-}
-
-button:focus {
-  outline: none;
-  background: #21a87d;
-  box-shadow: none;
-}
-
 </style>
 
